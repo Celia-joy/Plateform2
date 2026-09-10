@@ -1,4 +1,5 @@
 import { BarChart3, Smartphone, LineChart, Users, Calendar, ArrowRight } from 'lucide-react'
+import {useNavigate} from "react-router-dom"
 
 const features = [
     { icon: BarChart3, title: 'Smart Management', text: 'Manage orders, menus, staff and reservations from one intuitive dashboard.' },
@@ -51,6 +52,7 @@ function Navbar() {
 }
 
 function Hero() {
+    const navigate = useNavigate();
     return (
         <section className="mx-auto max-w-[1200px] px-6 py-16 md:py-24">
             <div className="grid items-center gap-12 md:grid-cols-2">
@@ -71,10 +73,14 @@ function Hero() {
                     </p>
 
                     <div className="mt-8 flex flex-wrap gap-4">
-                        <button className="rounded-lg bg-[#14532D] px-6 py-3 text-sm font-semibold text-white hover:bg-[#0F4224]">
+                        <button 
+                        onClick={() => navigate("/Restaurant-side/Signup")}
+                        className="rounded-lg bg-[#14532D] px-6 py-3 text-sm font-semibold text-white hover:bg-[#0F4224]">
                             Register as restaurant
                         </button>
-                        <button className="rounded-lg border border-[#14532D] px-6 py-3 text-sm font-semibold text-[#14532D] hover:bg-[#E7F0E3]">
+                        <button
+                        onClick={()=> navigate("/Customer-side/Signup")}
+                        className="rounded-lg border border-[#14532D] px-6 py-3 text-sm font-semibold text-[#14532D] hover:bg-[#E7F0E3]">
                             Register as customer
                         </button>
                     </div>
