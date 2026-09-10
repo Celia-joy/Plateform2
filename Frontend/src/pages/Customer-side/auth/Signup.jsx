@@ -42,6 +42,9 @@ function CustomerSignup() {
                 name: 'MPANO Curie',
                 role: 'Food lover',
             }}
+            navText="Already have an account?"
+            navLinkLabel="Login"
+            navLinkTo="/Customer-side/Login"
         >
             <h2 className="font-heading text-3xl font-bold text-[#14532D]">
                 Create your account

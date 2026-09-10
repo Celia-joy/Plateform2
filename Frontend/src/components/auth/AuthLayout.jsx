@@ -1,8 +1,7 @@
-// src/components/auth/AuthLayout.jsx
 import { Link } from 'react-router-dom'
 import { Star } from 'lucide-react'
 
-function AuthLayout({ image, heading, highlight, description, stats, testimonial, children }) {
+function AuthLayout({ image, heading, highlight, description, stats, testimonial, navText, navLinkLabel, navLinkTo, children }) {
     return (
         <div className="min-h-screen bg-[#FBF3EA]">
             <nav className="w-full">
@@ -17,9 +16,9 @@ function AuthLayout({ image, heading, highlight, description, stats, testimonial
                     </div>
 
                     <p className="text-sm text-[#374151]">
-                        Already have an account?{' '}
-                        <Link to="/login" className="font-semibold text-[#14532D] hover:underline">
-                            Log in
+                        {navText}{' '}
+                        <Link to={navLinkTo} className="font-semibold text-[#14532D] hover:underline">
+                            {navLinkLabel}
                         </Link>
                     </p>
                 </div>
@@ -27,8 +26,6 @@ function AuthLayout({ image, heading, highlight, description, stats, testimonial
 
             <div className="mx-auto max-w-[1200px] px-6 py-6">
                 <div className="grid overflow-hidden rounded-3xl md:grid-cols-2">
-
-                    {/* Left panel */}
                     <div
                         className="relative flex min-h-[720px] flex-col justify-between bg-cover bg-center p-8 text-white"
                         style={{
@@ -46,10 +43,7 @@ function AuthLayout({ image, heading, highlight, description, stats, testimonial
 
                             <div className="mt-6 flex gap-4">
                                 {stats.map(({ icon: Icon, value, label }) => (
-                                    <div
-                                        key={label}
-                                        className="rounded-xl bg-black/20 p-4 backdrop-blur-sm"
-                                    >
+                                    <div key={label} className="rounded-xl bg-black/20 p-4 backdrop-blur-sm">
                                         <Icon size={20} className="text-[#D9A441]" />
                                         <p className="mt-2 text-xl font-bold">{value}</p>
                                         <p className="text-xs text-white/80">{label}</p>
@@ -75,7 +69,6 @@ function AuthLayout({ image, heading, highlight, description, stats, testimonial
                         </div>
                     </div>
 
-                    {/* Right panel */}
                     <div className="flex flex-col justify-center bg-white p-8 md:p-12">
                         {children}
                     </div>
