@@ -1,7 +1,8 @@
+// src/components/auth/AuthLayout.jsx
 import { Link } from 'react-router-dom'
 import { Star } from 'lucide-react'
 
-function AuthLayout({ image, heading, highlight, description, stats, testimonial, navText, navLinkLabel, navLinkTo, children }) {
+function AuthLayout({ image, heading, highlight, description, stats, testimonial, securityNote, navRight, navText, navLinkLabel, navLinkTo, children }) {
     return (
         <div className="min-h-screen bg-[#FBF3EA]">
             <nav className="w-full">
@@ -15,12 +16,16 @@ function AuthLayout({ image, heading, highlight, description, stats, testimonial
                         </span>
                     </div>
 
-                    <p className="text-sm text-[#374151]">
-                        {navText}{' '}
-                        <Link to={navLinkTo} className="font-semibold text-[#14532D] hover:underline">
-                            {navLinkLabel}
-                        </Link>
-                    </p>
+                    {navRight ? (
+                        navRight
+                    ) : (
+                        <p className="text-sm text-[#374151]">
+                            {navText}{' '}
+                            <Link to={navLinkTo} className="font-semibold text-[#14532D] hover:underline">
+                                {navLinkLabel}
+                            </Link>
+                        </p>
+                    )}
                 </div>
             </nav>
 
@@ -52,21 +57,31 @@ function AuthLayout({ image, heading, highlight, description, stats, testimonial
                             </div>
                         </div>
 
-                        <div className="rounded-xl bg-black/30 p-4 backdrop-blur-sm">
-                            <div className="flex gap-1">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                    <Star key={i} size={16} className="fill-[#D9A441] text-[#D9A441]" />
-                                ))}
-                            </div>
-                            <p className="mt-2 text-sm text-white/90">"{testimonial.quote}"</p>
-                            <div className="mt-3 flex items-center gap-2">
-                                <div className="h-8 w-8 rounded-full bg-gray-300" />
-                                <div>
-                                    <p className="text-sm font-semibold">{testimonial.name}</p>
-                                    <p className="text-xs text-white/70">{testimonial.role}</p>
+                        {testimonial ? (
+                            <div className="rounded-xl bg-black/30 p-4 backdrop-blur-sm">
+                                <div className="flex gap-1">
+                                    {Array.from({ length: 5 }).map((_, i) => (
+                                        <Star key={i} size={16} className="fill-[#D9A441] text-[#D9A441]" />
+                                    ))}
+                                </div>
+                                <p className="mt-2 text-sm text-white/90">"{testimonial.quote}"</p>
+                                <div className="mt-3 flex items-center gap-2">
+                                    <div className="h-8 w-8 rounded-full bg-gray-300" />
+                                    <div>
+                                        <p className="text-sm font-semibold">{testimonial.name}</p>
+                                        <p className="text-xs text-white/70">{testimonial.role}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        ) : securityNote ? (
+                            <div className="rounded-xl bg-black/30 p-4 backdrop-blur-sm">
+                                <div className="flex items-center gap-2 font-semibold">
+                                    <securityNote.icon size={18} className="text-[#D9A441]" />
+                                    {securityNote.title}
+                                </div>
+                                <p className="mt-1 text-sm text-white/80">{securityNote.text}</p>
+                            </div>
+                        ) : null}
                     </div>
 
                     <div className="flex flex-col justify-center bg-white p-8 md:p-12">
