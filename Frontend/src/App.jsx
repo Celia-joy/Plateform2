@@ -13,8 +13,9 @@ import RestaurantOnboarding from "./pages/Restaurant-side/Onboarding"
 import RestaurantDashboard from "./pages/Restaurant-side/Dashboard"
 import RestaurantMenu from "./pages/Restaurant-side/Menu"
 import RestaurantStaff from "./pages/Restaurant-side/Staff"
-
-
+import RestaurantOrders from "./pages/Restaurant-side/Orders"
+import RestaurantTableBooking from "./pages/Restaurant-side/TableBooking"
+import RestaurantSettings from "./pages/Restaurant-side/Settings"
 
 function App() {
   const [message, setMessage] = useState("Loading...")
@@ -42,6 +43,9 @@ function App() {
    <Route path="/Restaurant-side/Dashboard" element={<RestaurantDashboard/>}/>
    <Route path="/Restaurant-side/Menu" element={<RestaurantMenu/>} />
    <Route path="/Restaurant-side/Staff" element={<RestaurantStaff/>} />
+   <Route path="/Restaurant-side/Orders" element={<RestaurantOrders/>} />
+   <Route path="/Restaurant-side/TableBooking" element={<RestaurantTableBooking/>} />
+   <Route path="/Restaurant-side/Settings" element={<RestaurantSettings/>} />
    </Routes>
    </BrowserRouter>
    </>
