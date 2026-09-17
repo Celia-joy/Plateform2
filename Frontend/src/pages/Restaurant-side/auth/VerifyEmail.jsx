@@ -1,6 +1,6 @@
 // src/pages/Restaurant-side/auth/VerifyEmail.jsx
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Mail, ShieldCheck, ArrowRight, ArrowLeft, Users, ShieldQuestion, Star } from 'lucide-react'
 import AuthLayout from '../../../components/auth/AuthLayout'
 import OtpInput from '../../../components/auth/OtpInput'
@@ -15,6 +15,7 @@ function SupportLink() {
 }
 
 function VerifyEmail() {
+    const navigate = useNavigate()
     const [code, setCode] = useState('')
     const [secondsLeft, setSecondsLeft] = useState(600) // 10:00
 
@@ -73,6 +74,7 @@ function VerifyEmail() {
 
                 <button
                     type="button"
+                    onClick={() => navigate('/Restaurant-side/Onboarding')}
                     className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#14532D] py-3 text-sm font-semibold text-white hover:bg-[#0F4224]"
                 >
                     Verify Email <ArrowRight size={16} />

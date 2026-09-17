@@ -9,6 +9,11 @@ import RestaurantResetPassword from "./pages/Restaurant-side/auth/ResetPassword"
 import CustomerResetPassword from "./pages/Customer-side/auth/ResetPassword"
 import RestaurantVerifyEmail from "./pages/Restaurant-side/auth/VerifyEmail"
 import CustomerVerifyEmail from "./pages/Customer-side/auth/VerifyEmail"
+import RestaurantOnboarding from "./pages/Restaurant-side/Onboarding"
+import RestaurantDashboard from "./pages/Restaurant-side/Dashboard"
+import RestaurantMenu from "./pages/Restaurant-side/Menu"
+import RestaurantStaff from "./pages/Restaurant-side/Staff"
+
 
 
 function App() {
@@ -33,6 +38,10 @@ function App() {
    <Route path="/Customer-side/ResetPassword" element={<CustomerResetPassword/>}/>
    <Route path="/Restaurant-side/VerifyEmail" element={<RestaurantVerifyEmail/>}/>
    <Route path="Customer-side/VerifyEmail" element={<CustomerVerifyEmail/>}/>
+   <Route path="/Restaurant-side/Onboarding" element={<RestaurantOnboarding/>}/>
+   <Route path="/Restaurant-side/Dashboard" element={<RestaurantDashboard/>}/>
+   <Route path="/Restaurant-side/Menu" element={<RestaurantMenu/>} />
+   <Route path="/Restaurant-side/Staff" element={<RestaurantStaff/>} />
    </Routes>
    </BrowserRouter>
    </>
