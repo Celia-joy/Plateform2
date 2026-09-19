@@ -5,16 +5,24 @@ import RestaurantDashboardLayout from '../../components/restaurant/RestaurantDas
 import StatCard from '../../components/restaurant/StatCard'
 import RoleBadge from '../../components/restaurant/RoleBadge'
 import StatusDot from '../../components/restaurant/StatusDot'
+import person2 from '../../assets/images/person2.jpg'
+import person3 from '../../assets/images/person3.jpg'
+import person4 from '../../assets/images/person4.jpg'
+import person5 from '../../assets/images/person5.jpg'
+import person6 from '../../assets/images/person6.jpg'
+import person7 from '../../assets/images/person7.jpg'
+import person8 from '../../assets/images/person8.jpg'
+import person9 from '../../assets/images/person9.jpg'
 
 const staffMembers = [
-    { name: 'Sandra IGIHOZO', email: 'sandra@gmail.com', role: 'Manager', phone: '+250 788 888 999', status: 'Active', joined: 'Apr 20, 2026' },
-    { name: 'Cadeau Isabelle', email: 'cadeau@gmail.com', role: 'Waitress', phone: '+250 788 888 999', status: 'Active', joined: 'Apr 20, 2026' },
-    { name: 'Dorcas Nyigena', email: 'dorcas@gmail.com', role: 'Waitress', phone: '+250 788 888 999', status: 'Active', joined: 'Apr 20, 2026' },
-    { name: 'Eunice KABUNDI', email: 'eunice@gmail.com', role: 'Waitress', phone: '+250 788 999 999', status: 'On Leave', joined: 'Apr 20, 2026' },
-    { name: 'Sano Angella', email: 'angella@gmail.com', role: 'Chef', phone: '+250 788 789 451', status: 'Active', joined: 'Apr 20, 2026' },
-    { name: 'Jenny Miriotta', email: 'mirlota@gmail.com', role: 'Chef', phone: '+250 781 234 587', status: 'Active', joined: 'Apr 20, 2026' },
-    { name: 'Amelie Gift', email: 'amelie@gmail.com', role: 'Bartender', phone: '+250 787 664 231', status: 'Active', joined: 'Apr 20, 2026' },
-    { name: 'Divine Teta', email: 'teta@gmail.com', role: 'Bartender', phone: '+250 780 123 458', status: 'Active', joined: 'Apr 20, 2026' },
+    { image: person2, name: 'Sandra IGIHOZO', email: 'sandra@gmail.com', role: 'Manager', phone: '+250 788 888 999', status: 'Active', joined: 'Apr 20, 2026' },
+    { image: person3, name: 'Cadeau Isabelle', email: 'cadeau@gmail.com', role: 'Waitress', phone: '+250 788 888 999', status: 'Active', joined: 'Apr 20, 2026' },
+    { image: person4, name: 'Dorcas Nyigena', email: 'dorcas@gmail.com', role: 'Waitress', phone: '+250 788 888 999', status: 'Active', joined: 'Apr 20, 2026' },
+    { image: person5, name: 'Eunice KABUNDI', email: 'eunice@gmail.com', role: 'Waitress', phone: '+250 788 999 999', status: 'On Leave', joined: 'Apr 20, 2026' },
+    { image: person6, name: 'Sano Angella', email: 'angella@gmail.com', role: 'Chef', phone: '+250 788 789 451', status: 'Active', joined: 'Apr 20, 2026' },
+    { image: person7, name: 'Jenny Miriotta', email: 'mirlota@gmail.com', role: 'Chef', phone: '+250 781 234 587', status: 'Active', joined: 'Apr 20, 2026' },
+    { image: person8, name: 'Amelie Gift', email: 'amelie@gmail.com', role: 'Bartender', phone: '+250 787 664 231', status: 'Active', joined: 'Apr 20, 2026' },
+    { image: person9, name: 'Divine Teta', email: 'teta@gmail.com', role: 'Bartender', phone: '+250 780 123 458', status: 'Active', joined: 'Apr 20, 2026' },
 ]
 
 function Staff() {
@@ -71,7 +79,7 @@ function Staff() {
                         {staffMembers.map((member, i) => (
                             <tr key={i} className="border-b border-gray-50 last:border-none">
                                 <td className="flex items-center gap-3 px-6 py-3">
-                                    <div className="h-9 w-9 rounded-full bg-gray-200" />
+                                    <img src={member.image} alt={member.name} className="h-9 w-9 rounded-full object-cover" />
                                     <div>
                                         <p className="font-medium text-[#111827]">{member.name}</p>
                                         <p className="text-xs text-[#4B5563]">{member.email}</p>

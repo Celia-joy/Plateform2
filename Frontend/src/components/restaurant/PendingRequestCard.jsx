@@ -1,12 +1,12 @@
 // src/components/restaurant/PendingRequestCard.jsx
 import { Check, X, Users } from 'lucide-react'
 
-function PendingRequestCard({ name, phone, time, guests, timeAgo, onAccept, onReject }) {
+function PendingRequestCard({ avatar, name, phone, time, guests, timeAgo, onAccept, onReject }) {
     return (
         <div className="rounded-xl border border-gray-100 p-3">
             <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-gray-200" />
+                    <img src={avatar} alt={name} className="h-8 w-8 rounded-full object-cover" />
                     <div>
                         <p className="text-sm font-medium text-[#111827]">{name}</p>
                         <p className="text-xs text-[#4B5563]">{phone}</p>

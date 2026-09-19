@@ -1,4 +1,4 @@
-// src/pages/Restaurant-side/auth/Login.jsx
+import authPhoto from "../../../assets/images/restaurant-owner-onpc.jpg"
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, Store, Users, ArrowRight, LockKeyhole } from 'lucide-react'
@@ -30,7 +30,7 @@ function Login() {
 
     return (
         <AuthLayout
-            image={null}
+            image={authPhoto}
             heading="Welcome Back! Let's continue growing your restaurant"
             highlight="together"
             description="Login to access your dashboard and manage your business effortlessly"

@@ -5,19 +5,23 @@ import RestaurantDashboardLayout from '../../components/restaurant/RestaurantDas
 import StatCard from '../../components/restaurant/StatCard'
 import TableAvailabilityGrid from '../../components/restaurant/TableAvailabilityGrid'
 import PendingRequestCard from '../../components/restaurant/PendingRequestCard'
+import person11 from '../../assets/images/person11.jpg'
+import person12 from '../../assets/images/person12.jpg'
+import person13 from '../../assets/images/person13.jpg'
+import person14 from '../../assets/images/person14.jpg'
 
 const dateTabs = ['Today', 'Upcoming', 'All reservations']
 
 const bookings = [
-    { time: '12:00 PM', name: 'John Doe', phone: '+250 788 888 999', table: 'Table 3', area: 'Indoor', guests: 4, status: 'Confirmed', occasion: 'Birthday Celebration' },
-    { time: '12:00 PM', name: 'Sarah Miller', phone: '+250 788 888 999', table: 'Table 4', area: 'Indoor', guests: 2, status: 'Confirmed', occasion: 'Lunch' },
-    { time: '3:00 PM', name: 'David Kim', phone: '+250 788 888 999', table: 'Table 4', area: 'Outdoor', guests: 6, status: 'Confirmed', occasion: 'Business Meeting' },
-    { time: '8:00 PM', name: 'Emma Grune', phone: '+250 788 888 999', table: 'Table 5', area: 'Outdoor', guests: 4, status: 'Confirmed', occasion: 'Dinner' },
-    { time: '9:00 PM', name: 'David Scott', phone: '+250 788 888 999', table: 'Table 5', area: 'Indoor', guests: 7, status: 'Pending', occasion: '' },
-    { time: '6:00 PM', name: 'Keith Powers', phone: '+250 788 888 999', table: 'Table 5', area: 'Indoor', guests: 3, status: 'Pending', occasion: '' },
-    { time: '8:00 AM', name: 'Marah Rice', phone: '+250 788 888 999', table: 'Table 7', area: 'Indoor', guests: 5, status: 'Confirmed', occasion: 'Breakfast' },
-    { time: '7:00 PM', name: 'Lisa Parker', phone: '+250 788 888 999', table: 'Table 7', area: 'Indoor', guests: 4, status: 'Confirmed', occasion: 'Birthday Celebration' },
-    { time: '7:00 AM', name: 'William Taylor', phone: '+250 788 888 999', table: 'Table 6', area: 'Indoor', guests: 8, status: 'Confirmed', occasion: 'Breakfast' },
+    { avatar: person11, time: '12:00 PM', name: 'John Doe', phone: '+250 788 888 999', table: 'Table 3', area: 'Indoor', guests: 4, status: 'Confirmed', occasion: 'Birthday Celebration' },
+    { avatar: person12, time: '12:00 PM', name: 'Sarah Miller', phone: '+250 788 888 999', table: 'Table 4', area: 'Indoor', guests: 2, status: 'Confirmed', occasion: 'Lunch' },
+    { avatar: person13, time: '3:00 PM', name: 'David Kim', phone: '+250 788 888 999', table: 'Table 4', area: 'Outdoor', guests: 6, status: 'Confirmed', occasion: 'Business Meeting' },
+    { avatar: person14, time: '8:00 PM', name: 'Emma Grune', phone: '+250 788 888 999', table: 'Table 5', area: 'Outdoor', guests: 4, status: 'Confirmed', occasion: 'Dinner' },
+    { avatar: person11, time: '9:00 PM', name: 'David Scott', phone: '+250 788 888 999', table: 'Table 5', area: 'Indoor', guests: 7, status: 'Pending', occasion: '' },
+    { avatar: person12, time: '6:00 PM', name: 'Keith Powers', phone: '+250 788 888 999', table: 'Table 5', area: 'Indoor', guests: 3, status: 'Pending', occasion: '' },
+    { avatar: person13, time: '8:00 AM', name: 'Marah Rice', phone: '+250 788 888 999', table: 'Table 7', area: 'Indoor', guests: 5, status: 'Confirmed', occasion: 'Breakfast' },
+    { avatar: person14, time: '7:00 PM', name: 'Lisa Parker', phone: '+250 788 888 999', table: 'Table 7', area: 'Indoor', guests: 4, status: 'Confirmed', occasion: 'Birthday Celebration' },
+    { avatar: person11, time: '7:00 AM', name: 'William Taylor', phone: '+250 788 888 999', table: 'Table 6', area: 'Indoor', guests: 8, status: 'Confirmed', occasion: 'Breakfast' },
 ]
 
 const indoorTables = [
@@ -35,8 +39,8 @@ const outdoorTables = [
 ]
 
 const pendingRequests = [
-    { name: 'David Scott', phone: '+250 788 888 999', time: 'Today, 9:00PM', guests: '7 people', timeAgo: '10m ago' },
-    { name: 'Keith Powers', phone: '+250 788 888 999', time: 'Today, 6:00PM', guests: '20 people', timeAgo: '25m ago' },
+    { avatar: person11, name: 'David Scott', phone: '+250 788 888 999', time: 'Today, 9:00PM', guests: '7 people', timeAgo: '10m ago' },
+    { avatar: person12, name: 'Keith Powers', phone: '+250 788 888 999', time: 'Today, 6:00PM', guests: '20 people', timeAgo: '25m ago' },
 ]
 
 function TableBooking() {
@@ -96,7 +100,7 @@ function TableBooking() {
                                     <td className="px-4 py-3 text-[#111827]">{b.time}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-2">
-                                            <div className="h-7 w-7 rounded-full bg-gray-200" />
+                                            <img src={b.avatar} alt={b.name} className="h-7 w-7 rounded-full object-cover" />
                                             <div>
                                                 <p className="font-medium text-[#111827]">{b.name}</p>
                                                 {b.occasion && <p className="text-xs text-[#9CA3AF]">{b.occasion}</p>}

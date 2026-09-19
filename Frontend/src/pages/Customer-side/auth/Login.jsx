@@ -1,5 +1,6 @@
 // src/pages/Customer-side/auth/Login.jsx
 import { useState } from 'react'
+import authPhoto from "../../../assets/images/customer-onpc.jpg"
 import { Link } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, Store, Users, ArrowRight, LockKeyhole } from 'lucide-react'
 import AuthLayout from '../../../components/auth/AuthLayout'
@@ -30,7 +31,7 @@ function Login() {
 
     return (
         <AuthLayout
-            image={null}
+            image={authPhoto}
             heading="Good food, Great Experiences, delivered to you."
             highlight="Anywhere"
             description="Login to explore amazing restaurants exclusive offers and your favorite meals"

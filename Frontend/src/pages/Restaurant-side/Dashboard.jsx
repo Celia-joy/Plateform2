@@ -5,6 +5,10 @@ import {
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import RestaurantDashboardLayout from '../../components/restaurant/RestaurantDashboardLayout'
 import StatCard from '../../components/restaurant/StatCard'
+import grilledChicken from '../../assets/images/grilled-chicken.jpg'
+import beefBurger from '../../assets/images/beef-burger.jpg'
+import alfredoPasta from '../../assets/images/alfredo-pasta.jpg'
+import caesarSalad from '../../assets/images/caesar-salad.jpg'
 
 const revenueData = [
     { day: 'Mon', value: 300 },
@@ -17,10 +21,10 @@ const revenueData = [
 ]
 
 const recentOrders = [
-    { id: '#ORD-1028', name: 'Grilled chicken', time: 'Today, 11:45 AM', price: '$28.50', status: 'Completed' },
-    { id: '#ORD-1028', name: 'Beef burger', time: 'Today, 11:45 AM', price: '$15.00', status: 'Completed' },
-    { id: '#ORD-1028', name: 'Pasta Alfredo', time: 'Today, 11:45 AM', price: '$18.75', status: 'Pending' },
-    { id: '#ORD-1028', name: 'Caesar Salad', time: 'Today, 11:45 AM', price: '$12.50', status: 'Completed' },
+    { image: grilledChicken, id: '#ORD-1028', name: 'Grilled chicken', time: 'Today, 11:45 AM', price: '$28.50', status: 'Completed' },
+    { image: beefBurger, id: '#ORD-1028', name: 'Beef burger', time: 'Today, 11:45 AM', price: '$15.00', status: 'Completed' },
+    { image: alfredoPasta, id: '#ORD-1028', name: 'Pasta Alfredo', time: 'Today, 11:45 AM', price: '$18.75', status: 'Pending' },
+    { image: caesarSalad, id: '#ORD-1028', name: 'Caesar Salad', time: 'Today, 11:45 AM', price: '$12.50', status: 'Completed' },
 ]
 
 const tableBookings = [
@@ -31,11 +35,10 @@ const tableBookings = [
 ]
 
 const topSellingItems = [
-    { name: 'Grilled chicken', count: 32, max: 32 },
-    { name: 'Beef burger', count: 28, max: 32 },
-    { name: 'Pasta Alfredo', count: 24, max: 32 },
-    { name: 'Caesar Salad', count: 18, max: 32 },
-    { name: 'Lemonade', count: 15, max: 32 },
+    { image: grilledChicken, name: 'Grilled chicken', count: 32, max: 32 },
+    { image: beefBurger, name: 'Beef burger', count: 28, max: 32 },
+    { image: alfredoPasta, name: 'Pasta Alfredo', count: 24, max: 32 },
+    { image: caesarSalad, name: 'Caesar Salad', count: 18, max: 32 },
 ]
 
 const staffData = [
@@ -126,7 +129,7 @@ function Dashboard() {
                     <div className="mt-4 space-y-4">
                         {recentOrders.map((order, i) => (
                             <div key={i} className="flex items-center gap-3">
-                                <div className="h-9 w-9 shrink-0 rounded-lg bg-gray-200" />
+                                <img src={order.image} alt={order.name} className="h-9 w-9 shrink-0 rounded-lg object-cover" />
                                 <div className="min-w-0 flex-1">
                                     <p className="truncate text-sm font-medium text-[#111827]">{order.name}</p>
                                     <p className="text-xs text-[#4B5563]">{order.id} · {order.time}</p>
@@ -174,7 +177,7 @@ function Dashboard() {
                     <div className="mt-4 space-y-4">
                         {topSellingItems.map((item, i) => (
                             <div key={i} className="flex items-center gap-3">
-                                <div className="h-8 w-8 shrink-0 rounded-lg bg-gray-200" />
+                                <img src={item.image} alt={item.name} className="h-8 w-8 shrink-0 rounded-lg object-cover" />
                                 <div className="flex-1">
                                     <div className="flex items-center justify-between text-xs">
                                         <span className="font-medium text-[#111827]">{item.name}</span>

@@ -1,5 +1,6 @@
 // src/pages/Restaurant-side/auth/VerifyEmail.jsx
 import { useState, useEffect } from 'react'
+import authPhoto from "../../../assets/images/verifyEmail-restaurant.jpg"
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, ShieldCheck, ArrowRight, ArrowLeft, Users, ShieldQuestion, Star } from 'lucide-react'
 import AuthLayout from '../../../components/auth/AuthLayout'
@@ -35,7 +36,7 @@ function VerifyEmail() {
 
     return (
         <AuthLayout
-            image={null}
+            image={authPhoto}
             heading="One last step to get started with"
             highlight="Plateform"
             description="We've sent a verification code to your email address. Please enter the code below to verify your account."

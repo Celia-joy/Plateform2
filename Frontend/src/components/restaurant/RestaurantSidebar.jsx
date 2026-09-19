@@ -15,7 +15,7 @@ function RestaurantSidebar() {
     const location = useLocation()
 
     return (
-        <aside className="flex h-screen w-60 flex-col justify-between bg-[#0F3D28] p-5 text-white">
+        <aside className="sticky top-0 flex h-screen w-60 flex-col justify-between overflow-y-auto bg-[#0F3D28] p-5 text-white">
             <div>
                 <div className="flex items-center gap-2 px-2">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">

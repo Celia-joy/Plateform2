@@ -4,19 +4,20 @@ import { Search, Users, Clock, ShoppingBag, CheckCircle, XCircle, ChevronDown, C
 import RestaurantDashboardLayout from '../../components/restaurant/RestaurantDashboardLayout'
 import StatCard from '../../components/restaurant/StatCard'
 import OrderStatusStepper from '../../components/restaurant/OrderStatusStepper'
+import person10 from '../../assets/images/person10.jpg'
 
 const orderTabs = ['All orders', 'Pending', 'In Progress', 'Completed', 'Cancelled']
 
 const orders = [
-    { id: '#ORD-1052', customer: 'John Doe', phone: '+250 723 456 678', type: 'Dine In', items: '3 items', amount: '$45.50', time: '10:24 AM', status: 'In Progress', tableInfo: 'Table 5, 4 people' },
-    { id: '#ORD-1051', customer: 'Sarah Miller', phone: '+250 723 456 678', type: 'Dine In', items: '2 items', amount: '$23.50', time: '11:23 AM', status: 'In Progress', tableInfo: 'Table 2, 2 people' },
-    { id: '#ORD-1050', customer: 'Michael Brown', phone: '+250 723 456 678', type: 'Takeway', items: '1 item', amount: '$43.50', time: '03:45 AM', status: 'Pending', tableInfo: '' },
-    { id: '#ORD-1049', customer: 'Emily Johnson', phone: '+250 723 456 678', type: 'Delivery', items: '4 items', amount: '$44.00', time: '03:32 AM', status: 'Cancelled', tableInfo: '' },
-    { id: '#ORD-1048', customer: 'David Kim', phone: '+250 723 456 678', type: 'Delivery', items: '5 items', amount: '$59.00', time: '09:50 AM', status: 'Pending', tableInfo: '' },
-    { id: '#ORD-1047', customer: 'Lisa Parker', phone: '+250 723 456 678', type: 'Dine In', items: '6 items', amount: '$79.50', time: '06:00 AM', status: 'Completed', tableInfo: 'Table 3, 4 people' },
-    { id: '#ORD-1046', customer: 'James Wilson', phone: '+250 723 456 678', type: 'Takeway', items: '2 items', amount: '$34.50', time: '10:24 AM', status: 'In Progress', tableInfo: '' },
-    { id: '#ORD-1045', customer: 'Anna Taylor', phone: '+250 723 456 678', type: 'Dine In', items: '3 items', amount: '$65.50', time: '09:00 AM', status: 'In Progress', tableInfo: 'Table 6, 3 people' },
-    { id: '#ORD-1044', customer: 'Simbi Lys', phone: '+250 723 456 678', type: 'Dine In', items: '2 items', amount: '$45.71', time: '05:45 AM', status: 'In Progress', tableInfo: 'Table 4, 2 people' },
+    { avatar: person10, id: '#ORD-1052', customer: 'John Doe', phone: '+250 723 456 678', type: 'Dine In', items: '3 items', amount: '$45.50', time: '10:24 AM', status: 'In Progress', tableInfo: 'Table 5, 4 people' },
+    { avatar: person10, id: '#ORD-1051', customer: 'Sarah Miller', phone: '+250 723 456 678', type: 'Dine In', items: '2 items', amount: '$23.50', time: '11:23 AM', status: 'In Progress', tableInfo: 'Table 2, 2 people' },
+    { avatar: person10, id: '#ORD-1050', customer: 'Michael Brown', phone: '+250 723 456 678', type: 'Takeway', items: '1 item', amount: '$43.50', time: '03:45 AM', status: 'Pending', tableInfo: '' },
+    { avatar: person10, id: '#ORD-1049', customer: 'Emily Johnson', phone: '+250 723 456 678', type: 'Delivery', items: '4 items', amount: '$44.00', time: '03:32 AM', status: 'Cancelled', tableInfo: '' },
+    { avatar: person10, id: '#ORD-1048', customer: 'David Kim', phone: '+250 723 456 678', type: 'Delivery', items: '5 items', amount: '$59.00', time: '09:50 AM', status: 'Pending', tableInfo: '' },
+    { avatar: person10, id: '#ORD-1047', customer: 'Lisa Parker', phone: '+250 723 456 678', type: 'Dine In', items: '6 items', amount: '$79.50', time: '06:00 AM', status: 'Completed', tableInfo: 'Table 3, 4 people' },
+    { avatar: person10, id: '#ORD-1046', customer: 'James Wilson', phone: '+250 723 456 678', type: 'Takeway', items: '2 items', amount: '$34.50', time: '10:24 AM', status: 'In Progress', tableInfo: '' },
+    { avatar: person10, id: '#ORD-1045', customer: 'Anna Taylor', phone: '+250 723 456 678', type: 'Dine In', items: '3 items', amount: '$65.50', time: '09:00 AM', status: 'In Progress', tableInfo: 'Table 6, 3 people' },
+    { avatar: person10, id: '#ORD-1044', customer: 'Simbi Lys', phone: '+250 723 456 678', type: 'Dine In', items: '2 items', amount: '$45.71', time: '05:45 AM', status: 'In Progress', tableInfo: 'Table 4, 2 people' },
 ]
 
 const orderTypeStyles = {
@@ -173,7 +174,7 @@ function Orders() {
                         <div className="mt-4 border-t border-gray-100 pt-4">
                             <h4 className="text-xs font-semibold uppercase text-[#9CA3AF]">Customer Information</h4>
                             <div className="mt-2 flex items-center gap-2">
-                                <div className="h-8 w-8 rounded-full bg-gray-200" />
+                                <img src={selectedOrder.avatar} alt={selectedOrder.customer} className="h-8 w-8 rounded-full object-cover" />
                                 <span className="flex-1 text-sm font-medium text-[#111827]">{selectedOrder.customer}</span>
                                 <button className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200">
                                     <Phone size={12} className="text-[#4B5563]" />

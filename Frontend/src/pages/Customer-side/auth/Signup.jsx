@@ -1,5 +1,6 @@
 // src/pages/auth/CustomerSignup.jsx
 import { useState } from 'react'
+import authPhoto from "../../../assets/images/customer-onpc.jpg"
 import { User, Mail, Lock, Eye, EyeOff, Store, Users, ArrowRight } from 'lucide-react'
 import AuthLayout from '../../../components/auth/AuthLayout'
 import FormInput from '../../../components/ui/FormInput'
@@ -29,7 +30,7 @@ function CustomerSignup() {
 
     return (
         <AuthLayout
-            image={null}
+            image={authPhoto}
             heading="Join thousands of food lovers discovering amazing"
             highlight="restaurants"
             description="Create an account and explore the best restaurants near you, order easily and enjoy exclusive offers."

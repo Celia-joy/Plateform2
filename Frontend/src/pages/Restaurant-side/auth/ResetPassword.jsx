@@ -1,5 +1,6 @@
 // src/pages/Restaurant-side/auth/ResetPassword.jsx
 import { Link } from 'react-router-dom'
+import authPhoto from "../../../assets/images/restaurant-owner-onpc.jpg"
 import { Globe, Lock, Mail, ArrowRight, ArrowLeft, Store, Users } from 'lucide-react'
 import AuthLayout from '../../../components/auth/AuthLayout'
 import FormInput from '../../../components/ui/FormInput'
@@ -16,7 +17,7 @@ function LanguageSelector() {
 function ResetPassword() {
     return (
         <AuthLayout
-            image={null}
+            image={authPhoto}
             heading="Simplifying Restaurants"
             highlight="Operations"
             description="Join thousands of restaurants growing their business with Plateform"

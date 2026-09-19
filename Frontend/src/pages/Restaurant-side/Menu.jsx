@@ -3,19 +3,28 @@ import { useState } from 'react'
 import { Search, Pencil, MoreVertical, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
 import RestaurantDashboardLayout from '../../components/restaurant/RestaurantDashboardLayout'
 import DishCard from '../../components/restaurant/DishCard'
+import grilledChicken from '../../assets/images/grilled-chicken.jpg'
+import margheritaPizza from '../../assets/images/margherita-pizza.jpg'
+import alfredoPasta from '../../assets/images/alfredo-pasta.jpg'
+import caesarSalad from '../../assets/images/caesar-salad.jpg'
+import beefBurger from '../../assets/images/beef-burger.jpg'
+import ribeyeSteak from '../../assets/images/ribeye-steak.jpg'
+import chocolateCake from '../../assets/images/chocolate-cake.jpg'
+
+const dishes = [
+    { image: grilledChicken, name: 'Grilled chicken', description: 'Juicy grilled chicken served with seasonal vegetables.', price: '12.00', available: true },
+    { image: margheritaPizza, name: 'Margherita Pizza', description: 'Classic pizza with tomato sauce, mozzarella and basil.', price: '10.00', available: true },
+    { image: alfredoPasta, name: 'Pasta Alfredo', description: 'Creamy pasta with grilled chicken and parmesan.', price: '11.50', available: true },
+    { image: caesarSalad, name: 'Caesar Salad', description: 'Crisp romaine lettuce with parmesan & caesar dressing.', price: '7.00', available: true },
+    { image: beefBurger, name: 'Beef burger', description: 'Grilled beef patty with cheese, lettuce, tomato & fries.', price: '9.50', available: true },
+    { image: ribeyeSteak, name: 'Ribeye Steak', description: 'Premium ribeye steak served with mashed potato.', price: '18.00', available: true },
+    { image: chocolateCake, name: 'Chocolate Cake',description: 'Rich chocolate cake with chocolate ganache.', price: '6.00', available: true },
+]
 
 const menuTabs = ['Main Menu', 'Breakfast', 'Drinks', 'Desserts']
 const categoryTabs = ['All', 'Starters', 'Main Courses', 'Sides', 'Desserts', 'Drinks']
 
-const dishes = [
-    { name: 'Grilled chicken', description: 'Juicy grilled chicken served with seasonal vegetables.', price: '12.00', available: true },
-    { name: 'Margherita Pizza', description: 'Classic pizza with tomato sauce, mozzarella and basil.', price: '10.00', available: true },
-    { name: 'Pasta Alfredo', description: 'Creamy pasta with grilled chicken and parmesan.', price: '11.50', available: true },
-    { name: 'Caesar Salad', description: 'Crisp romaine lettuce with parmesan & caesar dressing.', price: '7.00', available: true },
-    { name: 'Beef burger', description: 'Grilled beef patty with cheese, lettuce, tomato & fries.', price: '9.50', available: true },
-    { name: 'Ribeye Steak', description: 'Premium ribeye steak served with mashed potato.', price: '18.00', available: true },
-    { name: 'Chocolate Cake', description: 'Rich chocolate cake with chocolate ganache.', price: '6.00', available: true },
-]
+
 
 function Menu() {
     const [activeMenuTab, setActiveMenuTab] = useState('Main Menu')

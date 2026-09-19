@@ -1,5 +1,6 @@
 // src/pages/Restaurant-side/auth/Signup.jsx
 import { useState } from 'react'
+import authPhoto from "../../../assets/images/restaurant-owner-onpc.jpg"
 import { User, Mail, Lock, Eye, EyeOff, Store, Users, ArrowRight } from 'lucide-react'
 import AuthLayout from '../../../components/auth/AuthLayout'
 import FormInput from '../../../components/ui/FormInput'
@@ -29,7 +30,7 @@ function Signup() {
 
     return (
         <AuthLayout
-            image={null}
+            image={authPhoto}
             heading="Join Thousands of Restaurants growing with"
             highlight="Plateform"
             description="All-in-one platform to manage operations, delight customers and grow your business"

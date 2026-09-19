@@ -1,5 +1,8 @@
 import { BarChart3, Smartphone, LineChart, Users, Calendar, ArrowRight } from 'lucide-react'
 import {useNavigate} from "react-router-dom"
+import desktopMockup from "../assets/images/desktop-dashboard.png"
+import mobileMockup from "../assets/images/mobile-dashboard.png"
+import ctaPhoto from "../assets/images/waiter-serving-landing-page.jpg"
 
 const features = [
     { icon: BarChart3, title: 'Smart Management', text: 'Manage orders, menus, staff and reservations from one intuitive dashboard.' },
@@ -98,8 +101,8 @@ function Hero() {
                 </div>
 
                 <div className="relative flex justify-center">
-                    <div className="h-[380px] w-[300px] rounded-3xl border-8 border-[#14532D] bg-white shadow-xl" />
-                    <div className="absolute -left-4 bottom-4 h-[220px] w-[130px] rounded-2xl border-8 border-[#14532D] bg-white shadow-xl" />
+                    <img src={desktopMockup} alt="Dashboard preview" className="h-[380px] w-[300px] rounded-3xl border-8 border-[#14532D] object-cover shadow-xl" />
+                    <img src={mobileMockup} alt="Mobile dashboard preview" className="absolute -left-4 bottom-4 h-[220px] w-[130px] rounded-2xl border-8 border-[#14532D] object-cover shadow-xl" />
                 </div>
             </div>
         </section>
@@ -137,7 +140,7 @@ function CtaBanner() {
     return (
         <section className="mx-auto max-w-[1200px] px-6 py-8">
             <div className="grid overflow-hidden rounded-3xl md:grid-cols-2">
-                <div className="h-64 bg-gray-300 md:h-auto" />
+                <img src={ctaPhoto} alt="Restaurant service" className="h-64 w-full object-cover md:h-auto" />
                 <div className="bg-[#0F3D28] p-10 text-white">
                     <span className="inline-block rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold">
                         FOR RESTAURANTS
