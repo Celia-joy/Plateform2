@@ -3,6 +3,9 @@ import {useNavigate} from "react-router-dom"
 import desktopMockup from "../assets/images/desktop-dashboard.png"
 import mobileMockup from "../assets/images/mobile-dashboard.png"
 import ctaPhoto from "../assets/images/waiter-serving-landing-page.jpg"
+import Person11 from "../assets/images/person11.jpg"
+import Person12 from "../assets/images/person12.jpg"
+import Person13 from "../assets/images/person13.jpg"
 
 const features = [
     { icon: BarChart3, title: 'Smart Management', text: 'Manage orders, menus, staff and reservations from one intuitive dashboard.' },
@@ -90,8 +93,13 @@ function Hero() {
 
                     <div className="mt-8 flex items-center gap-3">
                         <div className="flex -space-x-2">
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="h-8 w-8 rounded-full border-2 border-white bg-gray-300" />
+                            {[Person11, Person12, Person13].map((photo, i) => (
+                                <img
+                                    key={i}
+                                    src={photo}
+                                    alt="Happy customer"
+                                    className="h-8 w-8 rounded-full border-2 border-white object-cover"
+                                />
                             ))}
                         </div>
                         <p className="text-sm text-[#4B5563]">
