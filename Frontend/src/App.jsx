@@ -17,6 +17,10 @@ import RestaurantOrders from "./pages/Restaurant-side/Orders"
 import RestaurantTableBooking from "./pages/Restaurant-side/TableBooking"
 import RestaurantSettings from "./pages/Restaurant-side/Settings"
 import CustomerRestaurants from "./pages/Customer-side/Restaurants"
+import CustomerMenu from "./pages/Customer-side/Menu"
+import CustomerOrders from "./pages/Customer-side/Orders"
+import CustomerTableBooking from "./pages/Customer-side/TableBooking"
+import CustomerSettings from "./pages/Customer-side/Settings"
 
 function App() {
   const [message, setMessage] = useState("Loading...")
@@ -48,6 +52,10 @@ function App() {
    <Route path="/Restaurant-side/TableBooking" element={<RestaurantTableBooking/>} />
    <Route path="/Restaurant-side/Settings" element={<RestaurantSettings/>} />
    <Route path="/Customer-side/Restaurants" element={<CustomerRestaurants/>} />
+   <Route path="/Customer-side/Menu" element={<CustomerMenu/>} />
+   <Route path="/Customer-side/Orders" element={<CustomerOrders/>} />
+   <Route path="/Customer-side/TableBooking" element={<CustomerTableBooking/>} />
+   <Route path="/Customer-side/Settings" element={<CustomerSettings/>} />
    </Routes>
    </BrowserRouter>
    </>
