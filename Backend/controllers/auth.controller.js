@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs"
 import User from "../models/User.js"
 import jwt from "jsonwebtoken"
 import { JWT_EXPIRES_IN, JWT_SECRET } from "../config/env.js"
+import { sendEmail } from "../utils/sendEmail.js"
 
 export const signUp = async (req, res,next) => {
     const {fullName, email, password, role} = req.body
@@ -20,19 +21,38 @@ export const signUp = async (req, res,next) => {
         }
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
+        const verificationCodeExpiresAt = new Date(Date.now() + 10 * 60 * 1000)
+
         const newUser = await User.create({
             fullName,
             email,
             password: hashedPassword,
-            role
+            role,
+            verificationCode,
+            verificationCodeExpiresAt
         })
+
+        try {
+            await sendEmail({
+                to: newUser.email,
+                subject: "Verify your Plateform account",
+                html: `<p>Hi ${newUser.fullName},</p>
+                        <p>Your Plateform verification code is: </p>
+                        <p>${verificationCode},</p>
+                        <p>This code expires in 10 minutes.</p>`
+            })
+        }
+        catch(emailError){
+            console.error("Failed to send verification email: ", emailError.message)
+        }
         res.status(201).json({
             message: "User registered successfully",
             user: {
                 id: newUser._id,
                 fullName: newUser.fullName,
                 email: newUser.email,
-                role: newUser.role
+                role: newUser.role,
             }
         })
     }
@@ -92,4 +112,80 @@ export const signOut = async(req, res, next) =>{
         success: true,
         message: "User signed out successfully"
     })
+}
+
+export const verifyEmail = async(req, res, next) => {
+    try{
+        const { email, code } = req.body
+        if(!email || !code){
+            const error = new Error("Email and code are required")
+            error.statusCode = 404
+            throw error
+        }
+        const user = await User.findOne({ email }).select("+verificationCode +verificationCodeExpiresAt ")
+        if(!user){
+            const error = new Error("User not found")
+            error.statusCode = 404
+            throw error
+        }
+        if (user.isVerified){
+            return res.status(200).json({ message: "Email is already verified" })
+        }
+        if(!user.verificationCode || user.verificationCode !== code){
+            const error = new Error("Invalid verification code")
+            error.statusCode = 400
+            throw error
+        }
+        if(user.verificationCodeExpiresAt < new Date()){
+            const error = new Error("Verification code has expired. Please request a new one.")
+            error.statusCode = 400
+            throw error
+        }
+
+        user.isVerified = true
+        user.verificationCode = undefined
+        user.verificationCodeExpiresAt = undefined
+        await user.save()
+
+        res.status(200).json({message: "Email verified successfully"})
+
+    }
+    catch(error){
+        next(error)
+    }
+}
+
+export const resendVerificationCode = async (req, res, next) =>{
+    try{
+        const { email } = req.body
+        if(!email){
+            const error = new Error("Email is required")
+            error.statusCode = 404
+            throw error
+        }
+        const user = await User.findOne({ email })
+        if (user.isVerified){
+            return res.status(200).json({message: "Email is already verified"})
+        }
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
+        const verificationCodeExpiresAt = new Date(Date.now() + 10 * 60 * 1000)
+
+        user.verificationCode = verificationCode
+        user.verificationCodeExpiresAt = verificationCodeExpiresAt
+        await user.save()
+
+        await sendEmail({
+            to: user.email,
+            subject: 'Your new Plateform verification code',
+            html: `<p>Your new verification code is:</p>
+                   <h2>${verificationCode}</h2>
+                   <p>This code expires in 10 minutes.</p>`
+
+        })
+        res.status(200).json({message: "A new verification code has been sent to your email"})
+
+    }
+    catch(error){
+        next(error)
+    }
 }
