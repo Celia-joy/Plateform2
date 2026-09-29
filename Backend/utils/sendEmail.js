@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 })
 
 export const sendEmail = async ({ to, subject, html}) => {
-    await transporter.sendEmail({
+    await transporter.sendMail({
         from: `"Plateform" <${EMAIL_USER}>`,
         to,
         subject,
