@@ -5,6 +5,7 @@ import { PORT } from "./config/env.js"
 import authRouter from "./routes/auth.routes.js"
 import userRouter from "./routes/user.routes.js"
 import errorMiddleware from "./middleware/error.middleware.js"
+import restaurantRouter from "./routes/restaurant.routes.js"
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.get("/", (req, res)=>{
 });
 app.use('/api/auth', authRouter)
 app.use('/api/users', userRouter)
+app.use("/api/restaurants", restaurantRouter)
 
 app.use(errorMiddleware)
 
