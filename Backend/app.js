@@ -8,6 +8,7 @@ import errorMiddleware from "./middleware/error.middleware.js"
 import restaurantRouter from "./routes/restaurant.routes.js"
 import tableRouter from "./routes/table.routes.js"
 import bookingRouter from "./routes/booking.routes.js"
+import orderRouter from "./routes/order.routes.js"
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/users', userRouter)
 app.use("/api/restaurants", restaurantRouter)
 app.use("/api/tables", tableRouter)
 app.use("/api/bookings", bookingRouter)
+app.use("/api/orders", orderRouter)
 
 app.use(errorMiddleware)
 
