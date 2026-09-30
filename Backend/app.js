@@ -6,6 +6,8 @@ import authRouter from "./routes/auth.routes.js"
 import userRouter from "./routes/user.routes.js"
 import errorMiddleware from "./middleware/error.middleware.js"
 import restaurantRouter from "./routes/restaurant.routes.js"
+import tableRouter from "./routes/table.routes.js"
+import bookingRouter from "./routes/booking.routes.js"
 
 const app = express();
 
@@ -20,6 +22,8 @@ app.get("/", (req, res)=>{
 app.use('/api/auth', authRouter)
 app.use('/api/users', userRouter)
 app.use("/api/restaurants", restaurantRouter)
+app.use("/api/tables", tableRouter)
+app.use("/api/bookings", bookingRouter)
 
 app.use(errorMiddleware)
 
