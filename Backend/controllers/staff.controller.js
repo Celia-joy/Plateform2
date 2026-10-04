@@ -1,5 +1,6 @@
 import Staff from "../models/Staff.js"
 import Restaurant from "../models/Restaurant.js"
+import verifyRestaurantOwnership from "../utils/verifyRestaurantOwnership.js"
 
 const verifyRestaurantOwnership = async (restaurantId, userId) =>{
     const restaurant = await Restaurant.findById(restaurantId)
