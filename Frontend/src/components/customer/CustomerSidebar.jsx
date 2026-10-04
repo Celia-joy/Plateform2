@@ -4,6 +4,7 @@ import { Home, BookOpen, ShoppingBag, CalendarCheck, Settings, LogOut, ChevronRi
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import LogoutConfirmModal from "../ui/LogoutConfirmModal"
+import { useAuth } from "../../context/AuthContext"
 
 const navItems = [
     { label: 'Restaurants', icon: Home, path: '/Customer-side/Restaurants' },
@@ -16,9 +17,11 @@ const navItems = [
 function CustomerSidebar({ userPhoto }) {
     const location = useLocation()
     const navigate = useNavigate()
+    const { user, logout } = useAuth()
     const [showLogoutModal, setShowLogoutModal] = useState(false)
 
     const handleLogout = () => {
+        logout()
         setShowLogoutModal(false)
         navigate('/Customer-side/Login')
     }
@@ -62,7 +65,7 @@ function CustomerSidebar({ userPhoto }) {
                     <button className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-gray-50">
                         <img src={userPhoto} alt="Rick M." className="h-8 w-8 rounded-full object-cover" />
                         <div className="flex-1">
-                            <p className="text-sm font-semibold text-[#111827]">Rick M.</p>
+                            <p className="text-sm font-semibold text-[#111827]">{user?.fullName}</p>
                             <p className="text-xs text-[#9CA3AF]">View Profile</p>
                         </div>
                         <ChevronRight size={14} className="text-[#9CA3AF]" />

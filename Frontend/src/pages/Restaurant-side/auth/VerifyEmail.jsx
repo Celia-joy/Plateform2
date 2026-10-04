@@ -1,10 +1,11 @@
 // src/pages/Restaurant-side/auth/VerifyEmail.jsx
 import { useState, useEffect } from 'react'
-import authPhoto from "../../../assets/images/verifyEmail-restaurant.jpg"
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Mail, ShieldCheck, ArrowRight, ArrowLeft, Users, ShieldQuestion, Star } from 'lucide-react'
 import AuthLayout from '../../../components/auth/AuthLayout'
 import OtpInput from '../../../components/auth/OtpInput'
+import { verifyEmailCode, resendVerificationCode } from '../../../services/authService'
+import authPhoto from "../../../assets/images/verifyEmail-restaurant.jpg"
 
 function SupportLink() {
     return (
@@ -17,22 +18,65 @@ function SupportLink() {
 
 function VerifyEmail() {
     const navigate = useNavigate()
+    const location = useLocation()
+    const email = location.state?.email || 'your email'
+
     const [code, setCode] = useState('')
-    const [secondsLeft, setSecondsLeft] = useState(600) // 10:00
+    const [secondsLeft, setSecondsLeft] = useState(600)
+    const [isVerifying, setIsVerifying] = useState(false)
+    const [isResending, setIsResending] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+    const [infoMessage, setInfoMessage] = useState('')
 
     useEffect(() => {
         if (secondsLeft <= 0) return
-
-        const timer = setInterval(() => {
-            setSecondsLeft((prev) => prev - 1)
-        }, 1000)
-
-        // Cleanup: stop the interval if the component unmounts
+        const timer = setInterval(() => setSecondsLeft((prev) => prev - 1), 1000)
         return () => clearInterval(timer)
     }, [secondsLeft])
 
     const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, '0')
     const seconds = String(secondsLeft % 60).padStart(2, '0')
+
+    const handleVerify = async () => {
+        setErrorMessage('')
+        setInfoMessage('')
+
+        if (code.length !== 6) {
+            setErrorMessage('Please enter the full 6-digit code')
+            return
+        }
+
+        setIsVerifying(true)
+        try {
+            await verifyEmailCode(email, code)
+            navigate('/Restaurant-side/Onboarding')
+        }
+        catch (error) {
+            setErrorMessage(error.message)
+        }
+        finally {
+            setIsVerifying(false)
+        }
+    }
+
+    const handleResend = async () => {
+        setErrorMessage('')
+        setInfoMessage('')
+        setIsResending(true)
+
+        try {
+            await resendVerificationCode(email)
+            setSecondsLeft(600)
+            setCode('')
+            setInfoMessage('A new code has been sent to your email')
+        }
+        catch (error) {
+            setErrorMessage(error.message)
+        }
+        finally {
+            setIsResending(false)
+        }
+    }
 
     return (
         <AuthLayout
@@ -62,23 +106,40 @@ function VerifyEmail() {
                 </h2>
                 <p className="mt-2 text-sm text-[#4B5563]">
                     We've sent an 6-digit verification code to<br />
-                    <span className="font-semibold text-[#111827]">celiajoy@example.com</span>
+                    <span className="font-semibold text-[#111827]">{email}</span>
                 </p>
+
+                {errorMessage && (
+                    <div className="mt-4 w-full rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">
+                        {errorMessage}
+                    </div>
+                )}
+                {infoMessage && (
+                    <div className="mt-4 w-full rounded-lg bg-[#E7F0E3] px-4 py-2.5 text-sm text-[#14532D]">
+                        {infoMessage}
+                    </div>
+                )}
 
                 <div className="mt-6">
                     <OtpInput value={code} onChange={setCode} />
                 </div>
 
                 <p className="mt-4 text-sm text-[#4B5563]">
-                    The code will expire in <span className="font-semibold">{minutes}:{seconds}</span>
+                    {secondsLeft > 0 ? (
+                        <>The code will expire in <span className="font-semibold">{minutes}:{seconds}</span></>
+                    ) : (
+                        <span className="font-semibold text-red-600">Your code has expired — request a new one</span>
+                    )}
                 </p>
 
                 <button
                     type="button"
-                    onClick={() => navigate('/Restaurant-side/Onboarding')}
-                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#14532D] py-3 text-sm font-semibold text-white hover:bg-[#0F4224]"
+                    onClick={handleVerify}
+                    disabled={isVerifying}
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-[#14532D] py-3 text-sm font-semibold text-white hover:bg-[#0F4224] disabled:opacity-60"
                 >
-                    Verify Email <ArrowRight size={16} />
+                    {isVerifying ? 'Verifying...' : 'Verify Email'}
+                    {!isVerifying && <ArrowRight size={16} />}
                 </button>
 
                 <div className="my-6 flex w-full items-center gap-3">
@@ -89,9 +150,11 @@ function VerifyEmail() {
 
                 <button
                     type="button"
-                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-[#111827] hover:bg-gray-50"
+                    onClick={handleResend}
+                    disabled={isResending}
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-[#111827] hover:bg-gray-50 disabled:opacity-60"
                 >
-                    <Mail size={16} /> Resend code
+                    <Mail size={16} /> {isResending ? 'Sending...' : 'Resend code'}
                 </button>
 
                 <Link

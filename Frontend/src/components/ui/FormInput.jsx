@@ -1,4 +1,4 @@
-function FormInput({ label, icon: Icon, type = 'text', placeholder, rightIcon, onRightIconClick }) {
+function FormInput({ label, icon: Icon, type = 'text', placeholder, value, onChange,   rightIcon, onRightIconClick }) {
     return (
         <div>
             <label className="mb-1.5 block text-sm font-semibold text-[#111827]">
@@ -9,6 +9,8 @@ function FormInput({ label, icon: Icon, type = 'text', placeholder, rightIcon, o
                 <input
                     type={type}
                     placeholder={placeholder}
+                    value={value}
+                    onChange={onChange}
                     className="w-full text-sm outline-none placeholder:text-gray-400"
                 />
                 {rightIcon && (

@@ -1,9 +1,11 @@
 // src/pages/Restaurant-side/auth/Signup.jsx
 import { useState } from 'react'
-import authPhoto from "../../../assets/images/restaurant-owner-onpc.jpg"
+import { useNavigate } from 'react-router-dom'
 import { User, Mail, Lock, Eye, EyeOff, Store, Users, ArrowRight } from 'lucide-react'
 import AuthLayout from '../../../components/auth/AuthLayout'
 import FormInput from '../../../components/ui/FormInput'
+import { registerUser } from '../../../services/authService'
+import authPhoto from '../../../assets/images/restaurant-owner-onpc.jpg'
 
 function GoogleIcon() {
     return (
@@ -25,8 +27,51 @@ function AppleIcon() {
 }
 
 function Signup() {
+    const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+
+    const [formData, setFormData] = useState({
+        fullName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    })
+
+    const updateField = (field, value) => {
+        setFormData((prev) => ({ ...prev, [field]: value }))
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setErrorMessage('')
+
+        if (formData.password !== formData.confirmPassword) {
+            setErrorMessage('Passwords do not match')
+            return
+        }
+
+        setIsSubmitting(true)
+
+        try {
+            await registerUser({
+                fullName: formData.fullName,
+                email: formData.email,
+                password: formData.password,
+                role: 'restaurant',
+            })
+
+            navigate('/Restaurant-side/VerifyEmail', { state: { email: formData.email } })
+        }
+        catch (error) {
+            setErrorMessage(error.message)
+        }
+        finally {
+            setIsSubmitting(false)
+        }
+    }
 
     return (
         <AuthLayout
@@ -44,7 +89,7 @@ function Signup() {
                 role: 'Restaurant owner',
             }}
             navText="Already have an account?"
-            navLinkLabel="Login"
+            navLinkLabel="Log in"
             navLinkTo="/Restaurant-side/Login"
         >
             <h2 className="font-heading text-3xl font-bold text-[#14532D]">
@@ -54,15 +99,36 @@ function Signup() {
                 Start your journey with Plateform today.
             </p>
 
-            <form className="mt-6 space-y-4">
-                <FormInput label="Full Name" icon={User} placeholder="Enter your full name" />
-                <FormInput label="Email" icon={Mail} type="email" placeholder="Enter your email address" />
+            {errorMessage && (
+                <div className="mt-4 rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">
+                    {errorMessage}
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                <FormInput
+                    label="Full Name"
+                    icon={User}
+                    placeholder="Enter your full name"
+                    value={formData.fullName}
+                    onChange={(e) => updateField('fullName', e.target.value)}
+                />
+                <FormInput
+                    label="Email"
+                    icon={Mail}
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={formData.email}
+                    onChange={(e) => updateField('email', e.target.value)}
+                />
 
                 <FormInput
                     label="Password"
                     icon={Lock}
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Create a password"
+                    value={formData.password}
+                    onChange={(e) => updateField('password', e.target.value)}
                     rightIcon={showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     onRightIconClick={() => setShowPassword((prev) => !prev)}
                 />
@@ -72,15 +138,19 @@ function Signup() {
                     icon={Lock}
                     type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Confirm your password"
+                    value={formData.confirmPassword}
+                    onChange={(e) => updateField('confirmPassword', e.target.value)}
                     rightIcon={showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     onRightIconClick={() => setShowConfirmPassword((prev) => !prev)}
                 />
 
                 <button
                     type="submit"
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#14532D] py-3 text-sm font-semibold text-white hover:bg-[#0F4224]"
+                    disabled={isSubmitting}
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#14532D] py-3 text-sm font-semibold text-white hover:bg-[#0F4224] disabled:opacity-60"
                 >
-                    Create account <ArrowRight size={16} />
+                    {isSubmitting ? 'Creating account...' : 'Create account'}
+                    {!isSubmitting && <ArrowRight size={16} />}
                 </button>
             </form>
 

@@ -1,9 +1,11 @@
-import authPhoto from "../../../assets/images/restaurant-owner-onpc.jpg"
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, Store, Users, ArrowRight, LockKeyhole } from 'lucide-react'
 import AuthLayout from '../../../components/auth/AuthLayout'
 import FormInput from '../../../components/ui/FormInput'
+import { loginUser } from '../../../services/authService'
+import { useAuth } from '../../../context/AuthContext'
+import authPhoto from '../../../assets/images/restaurant-owner-onpc.jpg'
 
 function GoogleIcon() {
     return (
@@ -25,8 +27,36 @@ function AppleIcon() {
 }
 
 function Login() {
+    const navigate = useNavigate()
+    const { login } = useAuth()
     const [showPassword, setShowPassword] = useState(false)
     const [rememberMe, setRememberMe] = useState(true)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+
+    const [formData, setFormData] = useState({ email: '', password: '' })
+
+    const updateField = (field, value) => {
+        setFormData((prev) => ({ ...prev, [field]: value }))
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setErrorMessage('')
+        setIsSubmitting(true)
+
+        try {
+            const response = await loginUser(formData)
+            login(response.data.user, response.data.token)
+            navigate('/Restaurant-side/Dashboard')
+        }
+        catch (error) {
+            setErrorMessage(error.message)
+        }
+        finally {
+            setIsSubmitting(false)
+        }
+    }
 
     return (
         <AuthLayout
@@ -54,14 +84,29 @@ function Login() {
                 Login to your Plateform account
             </p>
 
-            <form className="mt-6 space-y-4">
-                <FormInput label="Email Address" icon={Mail} type="email" placeholder="Enter your email address" />
+            {errorMessage && (
+                <div className="mt-4 rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">
+                    {errorMessage}
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                <FormInput
+                    label="Email Address"
+                    icon={Mail}
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={formData.email}
+                    onChange={(e) => updateField('email', e.target.value)}
+                />
 
                 <FormInput
                     label="Password"
                     icon={Lock}
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={(e) => updateField('password', e.target.value)}
                     rightIcon={showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     onRightIconClick={() => setShowPassword((prev) => !prev)}
                 />
@@ -83,9 +128,11 @@ function Login() {
 
                 <button
                     type="submit"
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#14532D] py-3 text-sm font-semibold text-white hover:bg-[#0F4224]"
+                    disabled={isSubmitting}
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#14532D] py-3 text-sm font-semibold text-white hover:bg-[#0F4224] disabled:opacity-60"
                 >
-                    Login <ArrowRight size={16} />
+                    {isSubmitting ? 'Logging in...' : 'Login'}
+                    {!isSubmitting && <ArrowRight size={16} />}
                 </button>
             </form>
 
