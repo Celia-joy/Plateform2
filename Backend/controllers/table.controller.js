@@ -1,6 +1,6 @@
 import Table from "../models/Table.js"
 
-export const getTableByRestaurant = async (req, res, next) => {
+export const getTablesByRestaurant = async (req, res, next) => {
     try{
         const tables = await Table.find({ restaurant: req.params.restaurantId })
         res.status(200).json({ 
@@ -24,7 +24,7 @@ export const createTable = async (req, res, next) => {
     }
 }
 
-export const UpdateTableStatus = async (req, res, next) => {
+export const updateTableStatus = async (req, res, next) => {
     try{
         const { status } = req.body
         const table = await Table.findByIdAndUpdate(

@@ -2,21 +2,6 @@ import Staff from "../models/Staff.js"
 import Restaurant from "../models/Restaurant.js"
 import verifyRestaurantOwnership from "../utils/verifyRestaurantOwnership.js"
 
-const verifyRestaurantOwnership = async (restaurantId, userId) =>{
-    const restaurant = await Restaurant.findById(restaurantId)
-    if(!restaurant){
-        const error = new Error("Restaurant not found")
-            error.statusCode = 404
-            throw error
-    }
-    if(restaurant.owner.toString() !== userId.toString()){
-        const error = new Error ("You do not have permission to manage this restaurant")
-        error.statusCode = 403
-        throw error
-    }
-    return restaurant
-}
-
 export const createStaff = async (req, res, next) => {
     try{
         const { restaurantId, name, email, phone, role, avatarUrl} = req.body

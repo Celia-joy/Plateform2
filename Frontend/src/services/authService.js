@@ -20,7 +20,7 @@ export const verifyEmailCode = (email, code) => {
     })
 }
 
-export const resendVerification = (email) => {
+export const resendVerificationCode = (email) => {
     return apiRequest("/auth/resend-code", {
         method: "POST",
         body: JSON.stringify({ email })

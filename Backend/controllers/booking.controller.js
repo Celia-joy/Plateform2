@@ -5,7 +5,7 @@ export const createBooking = async (req, res, next) => {
         const { restaurantId, table, date, time, guests, specialRequests } = req.body
         const booking = await Booking.create({
             restaurant: restaurantId,
-            customer: req.user_id,
+            customer: req.user._id,
             table,
             date,
             time,
@@ -19,7 +19,7 @@ export const createBooking = async (req, res, next) => {
     }
 }
 
-export const getBookingByRestaurant = async (req, res, next) => {
+export const getBookingsByRestaurant = async (req, res, next) => {
     try{
         const bookings = await Booking.find({ restaurant: req.params.restaurantId })
             .populate("customer", "fullName email")

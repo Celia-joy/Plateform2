@@ -1,6 +1,6 @@
 import { Router } from "express"
 import authorize from "../middleware/auth.middleware.js"
-import { createMenuItem, getMenItemsByRestaurant, updateMenuItem, deleteMenuItem} from "../controllers/menuItem.controller.js"
+import { createMenuItem, getMenuItemsByRestaurant, updateMenuItem, deleteMenuItem} from "../controllers/menuItem.controller.js"
 
 const menuItemRouter = Router()
 
