@@ -250,7 +250,7 @@ export const resetPassword = async (req, res, next) => {
             throw error
         }
 
-        if(!user.resetPasswordCodeExpiresAt < new Date()){
+        if(user.resetPasswordCodeExpiresAt < new Date()){
             const error = new Error("Reset code has expired. Please request a new one.")
             error.statusCode = 400
             throw error
