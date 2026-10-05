@@ -4,6 +4,8 @@ import { signIn } from "../controllers/auth.controller.js"
 import { signOut } from "../controllers/auth.controller.js"
 import { verifyEmail } from "../controllers/auth.controller.js"
 import { resendVerificationCode } from "../controllers/auth.controller.js"
+import { forgotPassword } from "../controllers/auth.controller.js"
+import { resetPassword } from "../controllers/auth.controller.js"
 
 
 const authRouter = Router()
@@ -13,5 +15,7 @@ authRouter.post("/signin", signIn)
 authRouter.post("/signout", signOut)
 authRouter.post("/verify-email", verifyEmail)
 authRouter.post("/resend-code", resendVerificationCode)
+authRouter.post("/forgot-password", forgotPassword)
+authRouter.post("/reset-password", resetPassword)
 
 export default authRouter

@@ -189,3 +189,84 @@ export const resendVerificationCode = async (req, res, next) =>{
         next(error)
     }
 }
+
+export const forgotPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body
+        if (!email){
+            const error = new Error("Email is required")
+            error.statusCode = 400
+            throw error
+        }
+
+        const user = await User.findOne({ email })
+        if (!user){
+            const error = new Error ("No account found with this email")
+            error.statusCode = 404
+            throw error
+        }
+
+        const resetPasswordCode = Math.floor(100000 + Math.random() * 900000).toString()
+        const resetPasswordCodeExpiresAt = new Date(Date.now() + 10 * 60 * 1000)
+
+        user.resetPasswordCode = resetPasswordCode
+        user.resetPasswordCodeExpiresAt = resetPasswordCodeExpiresAt
+        await user.save()
+
+        await sendEmail({
+            to : user.email,
+            subject: "Reset your Plateform password",
+            html: `<p>Your password reset code is:</p>
+            <h2>${resetPasswordCode}</h2>
+            <p>This code expires in 10 minutes. If you didn't request this, you can ignore this email. </p>`
+        })
+
+        res.status(200).json({message: "A password reset code has been sent to your email"})
+
+    }
+    catch(error){
+        next(error)
+    }
+}
+
+export const resetPassword = async (req, res, next) => {
+    try{
+        const { email, code, newPassword } = req.body
+        if(!email || !code || !newPassword){
+            const error = new Error("Email, code, and new password are required")
+            error.statusCode = 400
+            throw error
+        }
+        const user = await User.findOne({ email }).select("+resetPasswordCode +resetPasswordCodeExpiresAt")
+        if(!user){
+            const error = new Error("User not found")
+            error.statusCode = 404
+            throw error
+        }
+
+        if(!user.resetPasswordCode || user.resetPasswordCode !== code){
+            const error = new Error("Invalid reset code")
+            error.statusCode = 404
+            throw error
+        }
+
+        if(!user.resetPasswordCodeExpiresAt < new Date()){
+            const error = new Error("Reset code has expired. Please request a new one.")
+            error.statusCode = 400
+            throw error
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        user.password = await bcrypt.hash(newPassword, salt)
+        user.resetPasswordCode = undefined
+        user.resetPasswordCodeExpiresAt = undefined
+        await user.save()
+
+        res.status(200).json({
+            message: "Password reset successfully. You can now log in."
+        })
+    }
+    catch(error){
+        next(error)
+    }
+}

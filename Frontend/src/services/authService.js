@@ -26,3 +26,17 @@ export const resendVerificationCode = (email) => {
         body: JSON.stringify({ email })
     })
 }
+
+export const forgotPassword = (email) => {
+    return apiRequest("/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+    })
+}
+
+export const resetPassword = (email, code, newPassword) => {
+    return apiRequest("/auth/reset-password", {
+        method: "POST",
+        body: JSON.stringify({ email, code, newPassword }),
+    })
+}
