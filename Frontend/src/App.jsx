@@ -1,5 +1,7 @@
-import {useState, useEffect} from "react"
-import {BrowserRouter, Routes, Route} from "react-router-dom"
+// src/App.jsx
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import ProtectedRoute from "./components/auth/ProtectedRoute"
+
 import LandingPage from "./pages/LandingPage"
 import RestaurantSignup from "./pages/Restaurant-side/auth/Signup"
 import CustomerSignup from "./pages/Customer-side/auth/Signup"
@@ -23,42 +25,61 @@ import CustomerTableBooking from "./pages/Customer-side/TableBooking"
 import CustomerSettings from "./pages/Customer-side/Settings"
 
 function App() {
-  const [message, setMessage] = useState("Loading...")
-  useEffect(()=>{
-    fetch("http://localhost:3000/")
-    .then((res) => res.text())
-    .then((data) => setMessage(data))
-    .catch(() => setMessage("Could not reach backend"))
-
-  })
   return (
-   <>
-   <BrowserRouter>
-   <Routes>
-   <Route path="/" element={<LandingPage />} />
-   <Route path="/Restaurant-side/Signup" element={<RestaurantSignup />} />
-   <Route path="/Customer-side/Signup" element={<CustomerSignup />} />
-   <Route path="/Restaurant-side/Login" element={<RestaurantLogin/>} />
-   <Route path="/Customer-side/Login" element={<CustomerLogin/>} />
-   <Route path="/Restaurant-side/ResetPassword" element={<RestaurantResetPassword/>}/>
-   <Route path="/Customer-side/ResetPassword" element={<CustomerResetPassword/>}/>
-   <Route path="/Restaurant-side/VerifyEmail" element={<RestaurantVerifyEmail/>}/>
-   <Route path="Customer-side/VerifyEmail" element={<CustomerVerifyEmail/>}/>
-   <Route path="/Restaurant-side/Onboarding" element={<RestaurantOnboarding/>}/>
-   <Route path="/Restaurant-side/Dashboard" element={<RestaurantDashboard/>}/>
-   <Route path="/Restaurant-side/Menu" element={<RestaurantMenu/>} />
-   <Route path="/Restaurant-side/Staff" element={<RestaurantStaff/>} />
-   <Route path="/Restaurant-side/Orders" element={<RestaurantOrders/>} />
-   <Route path="/Restaurant-side/TableBooking" element={<RestaurantTableBooking/>} />
-   <Route path="/Restaurant-side/Settings" element={<RestaurantSettings/>} />
-   <Route path="/Customer-side/Restaurants" element={<CustomerRestaurants/>} />
-   <Route path="/Customer-side/Menu" element={<CustomerMenu/>} />
-   <Route path="/Customer-side/Orders" element={<CustomerOrders/>} />
-   <Route path="/Customer-side/TableBooking" element={<CustomerTableBooking/>} />
-   <Route path="/Customer-side/Settings" element={<CustomerSettings/>} />
-   </Routes>
-   </BrowserRouter>
-   </>
+    <BrowserRouter>
+      <Routes>
+        {/* Public */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/Restaurant-side/Signup" element={<RestaurantSignup />} />
+        <Route path="/Customer-side/Signup" element={<CustomerSignup />} />
+        <Route path="/Restaurant-side/Login" element={<RestaurantLogin />} />
+        <Route path="/Customer-side/Login" element={<CustomerLogin />} />
+        <Route path="/Restaurant-side/ResetPassword" element={<RestaurantResetPassword />} />
+        <Route path="/Customer-side/ResetPassword" element={<CustomerResetPassword />} />
+        <Route path="/Restaurant-side/VerifyEmail" element={<RestaurantVerifyEmail />} />
+        <Route path="/Customer-side/VerifyEmail" element={<CustomerVerifyEmail />} />
+
+        {/* Protected — Restaurant */}
+        <Route path="/Restaurant-side/Onboarding" element={
+          <ProtectedRoute allowedRole="restaurant"><RestaurantOnboarding /></ProtectedRoute>
+        } />
+        <Route path="/Restaurant-side/Dashboard" element={
+          <ProtectedRoute allowedRole="restaurant"><RestaurantDashboard /></ProtectedRoute>
+        } />
+        <Route path="/Restaurant-side/Menu" element={
+          <ProtectedRoute allowedRole="restaurant"><RestaurantMenu /></ProtectedRoute>
+        } />
+        <Route path="/Restaurant-side/Staff" element={
+          <ProtectedRoute allowedRole="restaurant"><RestaurantStaff /></ProtectedRoute>
+        } />
+        <Route path="/Restaurant-side/Orders" element={
+          <ProtectedRoute allowedRole="restaurant"><RestaurantOrders /></ProtectedRoute>
+        } />
+        <Route path="/Restaurant-side/TableBooking" element={
+          <ProtectedRoute allowedRole="restaurant"><RestaurantTableBooking /></ProtectedRoute>
+        } />
+        <Route path="/Restaurant-side/Settings" element={
+          <ProtectedRoute allowedRole="restaurant"><RestaurantSettings /></ProtectedRoute>
+        } />
+
+        {/* Protected — Customer */}
+        <Route path="/Customer-side/Restaurants" element={
+          <ProtectedRoute allowedRole="customer"><CustomerRestaurants /></ProtectedRoute>
+        } />
+        <Route path="/Customer-side/Menu" element={
+          <ProtectedRoute allowedRole="customer"><CustomerMenu /></ProtectedRoute>
+        } />
+        <Route path="/Customer-side/Orders" element={
+          <ProtectedRoute allowedRole="customer"><CustomerOrders /></ProtectedRoute>
+        } />
+        <Route path="/Customer-side/TableBooking" element={
+          <ProtectedRoute allowedRole="customer"><CustomerTableBooking /></ProtectedRoute>
+        } />
+        <Route path="/Customer-side/Settings" element={
+          <ProtectedRoute allowedRole="customer"><CustomerSettings /></ProtectedRoute>
+        } />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
