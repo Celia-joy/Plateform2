@@ -6,6 +6,7 @@ import Step2Location from './onboarding/Step2Location'
 import Step3OpeningHours from './onboarding/Step3OpeningHours'
 import Step4Services from './onboarding/Step4Services'
 import Step5FirstMenu, { OnboardingSuccessPanel } from './onboarding/Step5FirstMenu'
+import { createRestaurant } from '../../services/restaurantService'
 
 const defaultHours = {
     Monday: { open: '08:00', close: '22:00', isOpen: true },
@@ -20,6 +21,8 @@ const defaultHours = {
 function Onboarding() {
     const navigate = useNavigate()
     const [currentStep, setCurrentStep] = useState(1)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -41,8 +44,84 @@ function Onboarding() {
         setFormData((prev) => ({ ...prev, ...fields }))
     }
 
-    const goNext = () => setCurrentStep((prev) => prev + 1)
-    const goBack = () => setCurrentStep((prev) => prev - 1)
+    const goNext = () => {
+        setErrorMessage('')
+        setCurrentStep((prev) => prev + 1)
+    }
+
+    const goBack = () => {
+        setErrorMessage('')
+        setCurrentStep((prev) => prev - 1)
+    }
+
+    // The frontend and backend use different shapes, so we translate here
+    const buildPayload = (filledItems) => ({
+        name: formData.name,
+        description: formData.description,
+        cuisineType: formData.cuisineType,
+        country: formData.country,
+        city: formData.city,
+        address: formData.address,
+        zipCode: formData.zipCode,
+        mapLocation: formData.mapSearch,
+        hours: Object.entries(formData.hours).map(([day, value]) => ({
+            day,
+            open: value.open,
+            close: value.close,
+            isOpen: value.isOpen,
+        })),
+        phone: formData.phone,
+        email: formData.email,
+        website: formData.website,
+        services: formData.services,
+        menuItems: filledItems.map((item) => ({
+            category: item.category,
+            name: item.itemName,
+            price: Number(item.price),
+            description: item.description,
+        })),
+    })
+
+    const handleFinish = async () => {
+        if (!formData.name.trim()) {
+            setCurrentStep(1)
+            setErrorMessage('Restaurant name is required')
+            return
+        }
+
+        const filledItems = formData.menuItems.filter((item) => item.itemName.trim() !== '')
+
+        if (filledItems.length === 0) {
+            setErrorMessage('Add at least one menu item to finish setup')
+            return
+        }
+
+        if (filledItems.some((item) => item.price === '' || Number(item.price) <= 0)) {
+            setErrorMessage('Every menu item needs a price greater than 0')
+            return
+        }
+
+        setIsSubmitting(true)
+        try {
+            await createRestaurant(buildPayload(filledItems))
+            navigate('/Restaurant-side/Dashboard')
+        }
+        catch (error) {
+            setErrorMessage(error.message)
+        }
+        finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    const handleContinue = () => {
+        setErrorMessage('')
+        if (currentStep < 5) {
+            goNext()
+            return
+        }
+        handleFinish()
+    }
 
     const stepConfig = {
         1: {
@@ -78,14 +157,6 @@ function Onboarding() {
 
     const current = stepConfig[currentStep]
 
-    const handleContinue = () => {
-        if (currentStep === 5) {
-            navigate('/Restaurant-side/Dashboard')
-            return
-        }
-        goNext()
-    }
-
     return (
         <OnboardingLayout
             currentStep={currentStep}
@@ -97,6 +168,8 @@ function Onboarding() {
             showBack={current.showBack !== false}
             tip={current.tip}
             rightPanel={current.rightPanel}
+            errorMessage={errorMessage}
+            isSubmitting={isSubmitting}
         >
             {current.component}
         </OnboardingLayout>

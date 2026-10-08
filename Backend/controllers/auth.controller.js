@@ -4,6 +4,9 @@ import jwt from "jsonwebtoken"
 import { JWT_EXPIRES_IN, JWT_SECRET } from "../config/env.js"
 import { sendEmail } from "../utils/sendEmail.js"
 
+const generateToken = (userId) => 
+    jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN || "1d"})
+
 export const signUp = async (req, res,next) => {
     const {fullName, email, password, role} = req.body
     try{
@@ -82,11 +85,7 @@ export const signIn = async( req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        const token = jwt.sign(
-            {userId: user._id},
-            JWT_SECRET,
-            {expiresIn: JWT_EXPIRES_IN || "1d"}
-        )
+        const token = generateToken(user._id)
         res.status(200).json({
             success: true,
             message: "Login successful",
@@ -146,8 +145,21 @@ export const verifyEmail = async(req, res, next) => {
         user.verificationCode = undefined
         user.verificationCodeExpiresAt = undefined
         await user.save()
+        const token = generateToken(user._id)
 
-        res.status(200).json({message: "Email verified successfully"})
+        res.status(200).json({
+            success: true,
+            message: "Email verified successfully",
+            data: {
+                token,
+                user: {
+                    _id: user._id,
+                    fullName: user.fullName,
+                    email: user.email,
+                    role: user.role
+                }
+            }
+        })
 
     }
     catch(error){

@@ -9,7 +9,7 @@ const steps = [
     { number: 5, label: 'First menu' },
 ]
 
-function OnboardingLayout({ currentStep, title, description, children, onBack, onContinue, continueLabel = 'Continue', showBack = true, tip, rightPanel }) {
+function OnboardingLayout({ currentStep, title, description, children, onBack, onContinue, continueLabel = 'Continue', showBack = true, tip, rightPanel, errorMessage, isSubmitting }) {
     const percent = (currentStep / steps.length) * 100
 
     return (
@@ -79,6 +79,11 @@ function OnboardingLayout({ currentStep, title, description, children, onBack, o
                     <p className="mt-2 text-sm text-[#4B5563]">{description}</p>
 
                     <div className="mt-8 max-w-2xl">{children}</div>
+                    {errorMessage && (
+                        <div className="mt-6 max-w-2xl rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">
+                            {errorMessage}
+                        </div>
+                    )}
 
                     <div className="mt-10 flex max-w-2xl items-center justify-between">
                         {showBack ? (
@@ -92,9 +97,11 @@ function OnboardingLayout({ currentStep, title, description, children, onBack, o
 
                         <button
                             onClick={onContinue}
-                            className="rounded-lg bg-[#14532D] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#0F4224]"
+                            disabled={isSubmitting}
+                            className="rounded-lg bg-[#14532D] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#0F4224] disabled:opacity-60"
                         >
-                            {continueLabel} →
+                            {isSubmitting ? 'Saving...' : `${continueLabel} →`}
+                            
                         </button>
                     </div>
                 </div>
