@@ -7,6 +7,7 @@ import Step3OpeningHours from './onboarding/Step3OpeningHours'
 import Step4Services from './onboarding/Step4Services'
 import Step5FirstMenu, { OnboardingSuccessPanel } from './onboarding/Step5FirstMenu'
 import { createRestaurant } from '../../services/restaurantService'
+import { useRestaurant } from '../../context/RestaurantContext'
 
 const defaultHours = {
     Monday: { open: '08:00', close: '22:00', isOpen: true },
@@ -20,6 +21,7 @@ const defaultHours = {
 
 function Onboarding() {
     const navigate = useNavigate()
+    const { setRestaurant } = useRestaurant()
     const [currentStep, setCurrentStep] = useState(1)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
@@ -103,7 +105,8 @@ function Onboarding() {
 
         setIsSubmitting(true)
         try {
-            await createRestaurant(buildPayload(filledItems))
+            const response = await createRestaurant(buildPayload(filledItems))
+            setRestaurant(response.data.restaurant)
             navigate('/Restaurant-side/Dashboard')
         }
         catch (error) {

@@ -96,3 +96,21 @@ export const getRestaurantById = async (req, res, next) =>{
         next(error)
     }
 }
+
+export const getMyRestaurant = async (req, res, next) => {
+    try {
+        const restaurant = await Restaurant.findOne({ owner: req.user._id })
+        if(!restaurant) {
+            const error = new Error("You haven't set up a restaurant yet")
+            error.statusCode = 404
+            throw error
+        }
+        res.status(200).json({
+            success: true,
+            data: restaurant
+        })
+    }
+    catch(error){
+        next(error)
+    }
+}

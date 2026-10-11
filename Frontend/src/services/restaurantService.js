@@ -5,3 +5,6 @@ export const createRestaurant = (restaurantData) => {
         body: JSON.stringify(restaurantData)
     })
 }
+export const getMyRestaurant = () => {
+    return apiRequest("/restaurants/mine")
+}

@@ -12,7 +12,9 @@ export const apiRequest = async (endpoint, options = {}) => {
     })
     const data = await response.json()
     if (!response.ok) {
-        throw new Error(data.error || data.message || "Something went wrong")
+        const error = new Error(data.error || data.message || "Something went wrong")
+        error.status = response.status
+        throw error
     }
     return data
 }

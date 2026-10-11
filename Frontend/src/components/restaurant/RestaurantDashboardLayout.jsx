@@ -1,8 +1,21 @@
 // src/components/restaurant/RestaurantDashboardLayout.jsx
 import { Bell } from 'lucide-react'
 import RestaurantSidebar from './RestaurantSidebar'
+import { Navigate } from "react-router-dom"
+import { useRestaurant } from "../../context/RestaurantContext"
 
 function RestaurantDashboardLayout({ title, description, children }) {
+    const { restaurant, isLoading } = useRestaurant()
+    if(isLoading){
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-[#FBF3EA]">
+                <p className="text-sm text-[#4B5563]">Loading...</p>
+            </div>
+        )
+    }
+    if (!restaurant) {
+        return <Navigate to="/Restaurant-side/Onboarding" replace />
+    }
     return (
         <div className="flex min-h-screen bg-[#FBF3EA]">
             <RestaurantSidebar />

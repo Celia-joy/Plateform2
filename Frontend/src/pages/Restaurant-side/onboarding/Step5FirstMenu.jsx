@@ -1,4 +1,5 @@
 import { Upload, Plus, Store } from 'lucide-react'
+import { menuCategories } from "../../../constants/menuCategories"
 
 function Step5FirstMenu({ data, updateData }) {
     const updateItem = (index, fields) => {
@@ -26,9 +27,9 @@ function Step5FirstMenu({ data, updateData }) {
                                 className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-500 outline-none focus:border-[#14532D]"
                             >
                                 <option value="">Select category</option>
-                                <option value="main">Main Course</option>
-                                <option value="starter">Starter</option>
-                                <option value="drink">Drink</option>
+                                {menuCategories.map((cat) => (
+                                    <option key={cat.value} value={cat.value}>{cat.label}</option>
+                                ))}
                             </select>
                         </div>
                         <div>

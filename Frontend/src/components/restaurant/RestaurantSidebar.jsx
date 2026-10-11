@@ -5,6 +5,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import LogoutConfirmModal from '../ui/LogoutConfirmModal'
 import { useAuth } from "../../context/AuthContext"
+import { useRestaurant } from "../../context/RestaurantContext"
 
 const navItems = [
     { label: 'Dashboard', icon: LayoutGrid, path: '/Restaurant-side/Dashboard' },
@@ -20,6 +21,7 @@ function RestaurantSidebar() {
     const navigate = useNavigate()
     const { user, logout } = useAuth()
     const [showLogoutModal, setShowLogoutModal] = useState(false)
+    const { restaurant } = useRestaurant()
 
     const handleLogout = () => {
         logout()
@@ -66,7 +68,7 @@ function RestaurantSidebar() {
                     <button className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-white/10">
                         <div className="h-8 w-8 rounded-full bg-gray-300" />
                         <div className="flex-1">
-                            <p className="text-sm font-semibold">{user?.fullName}</p>
+                            <p className="text-sm font-semibold">{restaurant?.name || user?.fullName}</p>
                             <p className="text-xs text-white/60">Restaurant owner</p>
                         </div>
                         <ChevronDown size={16} className="text-white/60" />
