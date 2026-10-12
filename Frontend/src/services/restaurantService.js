@@ -8,3 +8,12 @@ export const createRestaurant = (restaurantData) => {
 export const getMyRestaurant = () => {
     return apiRequest("/restaurants/mine")
 }
+
+export const getRestaurants = (search = "") => {
+    const query = search.trim() ? `?search=${encodeURIComponent(search.trim())}` : ""
+    return apiRequest(`/restaurants${query}`)
+}
+
+export const getRestaurantById = (id) => {
+    return apiRequest(`/restaurants/${id}`)
+}

@@ -78,6 +78,15 @@ function App() {
         <Route path="/Customer-side/Settings" element={
           <ProtectedRoute allowedRole="customer"><CustomerSettings /></ProtectedRoute>
         } />
+
+        <Route path="/Customer-side/Menu/:restaurantId" element={
+          <ProtectedRoute allowedRole="customer"><CustomerMenu /></ProtectedRoute>
+        } />
+
+        <Route path="/Customer-side/TableBooking/:restaurantId" element={
+          <ProtectedRoute allowedRole="customer"><CustomerTableBooking /></ProtectedRoute>
+        } />
+
       </Routes>
     </BrowserRouter>
   )

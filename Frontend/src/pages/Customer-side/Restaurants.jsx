@@ -1,59 +1,85 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { ChevronDown, Search, SlidersHorizontal, MapPin, Star, Heart, LayoutGrid, Sparkles, Flame, Sparkle } from 'lucide-react'
 import CustomerDashboardLayout from '../../components/customer/CustomerDashboardLayout'
+import { getRestaurants } from '../../services/restaurantService'
 import person11 from '../../assets/images/person11.jpg'
 import restaurantOwnerPhoto from '../../assets/images/restaurant-owner-onpc.jpg'
 
 const filterTabs = [
-    { label: 'All', sublabel: 'Everything', icon: LayoutGrid },
-    { label: 'Nearby', sublabel: 'Near you', icon: MapPin },
-    { label: 'Popular', sublabel: 'Most loved', icon: Flame },
-    { label: 'Top Rated', sublabel: 'Best quality', icon: Star },
-    { label: 'New', sublabel: 'New places', icon: Sparkles },
-    { label: 'Cuisines', sublabel: 'All types', icon: Sparkle },
+    { label: 'All', sublabel: 'Everything', icon: LayoutGrid, enabled: true },
+    { label: 'Nearby', sublabel: 'Near you', icon: MapPin, enabled: false },
+    { label: 'Popular', sublabel: 'Most loved', icon: Flame, enabled: false },
+    { label: 'Top Rated', sublabel: 'Best quality', icon: Star, enabled: false },
+    { label: 'New', sublabel: 'New places', icon: Sparkles, enabled: false },
+    { label: 'Cuisines', sublabel: 'All types', icon: Sparkle, enabled: false },
 ]
 
-const nearbyRestaurants = [
-    { name: 'Green Leaf Bistro', cuisine: 'Italian . Pizza . Pasta', distance: '1.2 km away . Ngoma', price: '$$', time: '30-40 min', rating: '4.8', status: 'Open' },
-    { name: 'Bella Cucina', cuisine: 'Italian . European', distance: '2.4 km away . Huye City', price: '$$', time: '25-35 min', rating: '4.6', status: 'Open' },
-    { name: 'The Garden House', cuisine: 'Healthy . Vegan . Fusion', distance: '3.1 km away . Tumba', price: '$$', time: '30-45 min', rating: '4.7', status: 'Open' },
-    { name: 'Urban Eats', cuisine: 'Burgers . American . Fast Food', distance: '3.8 km away . Rango', price: '$$', time: '15-25 min', rating: '4.9', status: 'Open' },
-]
+const capitalize = (text) => (text ? text.charAt(0).toUpperCase() + text.slice(1) : '')
 
-const topRatedRestaurants = [
-    { name: 'Fusion Delight', cuisine: 'Fusion . International', distance: '2.6 km away . Campus', rating: '4.9', reviews: '256', status: 'Open' },
-    { name: 'Savory Hub', cuisine: 'African . Local . Traditional', distance: '1.7 km away . UR Hospital', rating: '4.8', reviews: '182', status: 'Open' },
-    { name: 'Cafe de Luxe', cuisine: 'Coffee . Breakfast . Desserts', distance: '2.9 km away . Kabutare', rating: '4.7', reviews: '142', status: 'Open' },
-]
+function RestaurantCard({ restaurant }) {
+    const location = [restaurant.address, capitalize(restaurant.city)].filter(Boolean).join(', ')
 
-function RestaurantCard({ name, cuisine, distance, price, time, rating }) {
     return (
-        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white">
-            <div className="relative h-32 w-full bg-gray-200">
-                <img src={restaurantOwnerPhoto} alt={name} className="h-full w-full object-cover" />
-                <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-white px-2 py-1 text-xs font-semibold text-[#111827]">
-                    <Star size={11} className="fill-[#D9A441] text-[#D9A441]" /> {rating}
-                </span>
-                <button className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90">
+        <Link
+            to={`/Customer-side/Menu/${restaurant._id}`}
+            className="block overflow-hidden rounded-2xl border border-gray-100 bg-white transition hover:shadow-md"
+        >
+            <div className="relative flex h-32 w-full items-center justify-center bg-gray-200">
+                {restaurant.coverImageUrl ? (
+                    <img src={restaurant.coverImageUrl} alt={restaurant.name} className="h-full w-full object-cover" />
+                ) : (
+                    <span className="font-heading text-4xl font-bold text-gray-400">
+                        {restaurant.name.charAt(0).toUpperCase()}
+                    </span>
+                )}
+                <span className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90">
                     <Heart size={13} className="text-[#374151]" />
-                </button>
+                </span>
             </div>
             <div className="p-3">
-                <p className="text-sm font-semibold text-[#111827]">{name}</p>
-                <p className="mt-1 text-xs text-[#4B5563]">{cuisine}</p>
-                <p className="mt-1 text-xs text-[#9CA3AF]">{distance}</p>
-                <div className="mt-2 flex items-center justify-between">
-                    <span className="text-xs text-[#4B5563]">{price} . {time}</span>
-                    <span className="rounded-full bg-[#E7F0E3] px-2 py-0.5 text-xs font-medium text-[#14532D]">Open</span>
-                </div>
+                <p className="text-sm font-semibold text-[#111827]">{restaurant.name}</p>
+                <p className="mt-1 text-xs text-[#4B5563]">{capitalize(restaurant.cuisineType) || 'Restaurant'}</p>
+                {location && (
+                    <p className="mt-1 flex items-center gap-1 text-xs text-[#9CA3AF]">
+                        <MapPin size={11} /> {location}
+                    </p>
+                )}
             </div>
-        </div>
+        </Link>
     )
 }
 
 function Restaurants() {
-    const [activeFilter, setActiveFilter] = useState('All')
+    const [restaurants, setRestaurants] = useState([])
     const [search, setSearch] = useState('')
+    const [isLoading, setIsLoading] = useState(true)
+    const [errorMessage, setErrorMessage] = useState('')
+
+    // Wait 300ms after the user stops typing before asking the backend
+    useEffect(() => {
+        let cancelled = false
+
+        const timer = setTimeout(async () => {
+            setIsLoading(true)
+            setErrorMessage('')
+            try {
+                const response = await getRestaurants(search)
+                if (!cancelled) setRestaurants(response.data)
+            }
+            catch (error) {
+                if (!cancelled) setErrorMessage(error.message)
+            }
+            finally {
+                if (!cancelled) setIsLoading(false)
+            }
+        }, 300)
+
+        return () => {
+            cancelled = true
+            clearTimeout(timer)
+        }
+    }, [search])
 
     return (
         <CustomerDashboardLayout userPhoto={person11}>
@@ -85,7 +111,7 @@ function Restaurants() {
                     <Search size={16} className="text-gray-400" />
                     <input
                         type="text"
-                        placeholder="Search restaurants, cuisines, or dishes..."
+                        placeholder="Search restaurants or cuisines..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="w-full text-sm outline-none"
@@ -100,14 +126,13 @@ function Restaurants() {
             </div>
 
             <div className="mt-4 flex gap-3">
-                {filterTabs.map(({ label, sublabel, icon: Icon }) => (
-                    <button
+                {filterTabs.map(({ label, sublabel, icon: Icon, enabled }) => (
+                    <div
                         key={label}
-                        onClick={() => setActiveFilter(label)}
-                        className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-left ${
-                            activeFilter === label
+                        className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${
+                            enabled
                                 ? 'border-[#14532D] bg-[#E7F0E3]'
-                                : 'border-gray-200 bg-white'
+                                : 'cursor-not-allowed border-gray-200 bg-white opacity-50'
                         }`}
                     >
                         <Icon size={16} className="text-[#14532D]" />
@@ -115,48 +140,36 @@ function Restaurants() {
                             <p className="text-xs font-semibold text-[#111827]">{label}</p>
                             <p className="text-[10px] text-[#9CA3AF]">{sublabel}</p>
                         </div>
-                    </button>
-                ))}
-            </div>
-
-            <div className="mt-8 flex items-center justify-between">
-                <h2 className="text-lg font-bold text-[#111827]">People Near you</h2>
-                <button className="flex items-center gap-1 text-sm font-medium text-[#14532D]">
-                    See all →
-                </button>
-            </div>
-            <div className="mt-4 grid grid-cols-4 gap-4">
-                {nearbyRestaurants.map((r, i) => (
-                    <RestaurantCard key={i} {...r} />
-                ))}
-            </div>
-
-            <div className="mt-8 flex items-center justify-between">
-                <h2 className="text-lg font-bold text-[#111827]">Top Rated Restaurants</h2>
-                <button className="flex items-center gap-1 text-sm font-medium text-[#14532D]">
-                    See all →
-                </button>
-            </div>
-            <div className="mt-4 divide-y divide-gray-100 rounded-2xl border border-gray-100 bg-white">
-                {topRatedRestaurants.map((r, i) => (
-                    <div key={i} className="flex items-center gap-4 p-4">
-                        <img src={restaurantOwnerPhoto} alt={r.name} className="h-14 w-14 rounded-lg object-cover" />
-                        <div className="flex-1">
-                            <p className="text-sm font-semibold text-[#111827]">{r.name}</p>
-                            <p className="text-xs text-[#4B5563]">{r.cuisine}</p>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm">
-                            <Star size={13} className="fill-[#D9A441] text-[#D9A441]" />
-                            <span className="font-semibold text-[#111827]">{r.rating}</span>
-                            <span className="text-xs text-[#9CA3AF]">({r.reviews})</span>
-                        </div>
-                        <div className="text-right text-xs text-[#4B5563]">
-                            {r.distance}
-                            <span className="ml-2 rounded-full bg-[#E7F0E3] px-2 py-0.5 font-medium text-[#14532D]">{r.status}</span>
-                        </div>
                     </div>
                 ))}
             </div>
+
+            <div className="mt-8 flex items-center justify-between">
+                <h2 className="text-lg font-bold text-[#111827]">Restaurants</h2>
+                {!isLoading && (
+                    <span className="text-sm text-[#4B5563]">{restaurants.length} found</span>
+                )}
+            </div>
+
+            {errorMessage && (
+                <div className="mt-4 rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">
+                    {errorMessage}
+                </div>
+            )}
+
+            {isLoading ? (
+                <p className="mt-4 text-sm text-[#9CA3AF]">Loading restaurants...</p>
+            ) : restaurants.length === 0 ? (
+                <p className="mt-4 text-sm text-[#9CA3AF]">
+                    {search.trim() ? 'No restaurants match your search.' : 'No restaurants yet.'}
+                </p>
+            ) : (
+                <div className="mt-4 grid grid-cols-4 gap-4">
+                    {restaurants.map((restaurant) => (
+                        <RestaurantCard key={restaurant._id} restaurant={restaurant} />
+                    ))}
+                </div>
+            )}
         </CustomerDashboardLayout>
     )
 }
