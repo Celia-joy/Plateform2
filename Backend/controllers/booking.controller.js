@@ -1,4 +1,5 @@
 import Booking from "../models/Booking.js"
+import Table from "../models/Table.js"
 import verifyRestaurantOwnership from "../utils/verifyRestaurantOwnership.js"
 
 export const createBooking = async (req, res, next) => {
@@ -50,7 +51,7 @@ export const getMyBookings = async (req, res, next) => {
 
 export const updateBookingStatus = async (req, res, next) => {
     try {
-        const { status } = req.body
+        const { status, table } = req.body
 
         const booking = await Booking.findById(req.params.id)
         if (!booking) {
@@ -62,16 +63,26 @@ export const updateBookingStatus = async (req, res, next) => {
         const isBookingCustomer = booking.customer.toString() === req.user._id.toString()
 
         if (isBookingCustomer) {
-            if (status !== "Cancelled") {
+            if (table !== undefined || status !== "Cancelled") {
                 const error = new Error("Customers can only cancel their own bookings")
                 error.statusCode = 403
                 throw error
             }
         } else {
             await verifyRestaurantOwnership(booking.restaurant, req.user._id)
+
+            if (table) {
+                const chosenTable = await Table.findById(table)
+                if (!chosenTable || chosenTable.restaurant.toString() !== booking.restaurant.toString()) {
+                    const error = new Error("That table does not belong to this restaurant")
+                    error.statusCode = 400
+                    throw error
+                }
+                booking.table = chosenTable._id
+            }
         }
 
-        booking.status = status
+        if (status) booking.status = status
         await booking.save()
 
         res.status(200).json({ success: true, data: booking })

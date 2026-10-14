@@ -1,4 +1,3 @@
-// src/components/customer/CustomerTableGrid.jsx
 const statusStyles = {
     available: 'bg-[#DCFCE7] text-[#166534] cursor-pointer hover:ring-2 hover:ring-[#14532D]',
     booked: 'bg-[#FEF3C7] text-[#92400E] cursor-not-allowed',
@@ -6,29 +5,36 @@ const statusStyles = {
     maintenance: 'bg-[#E5E7EB] text-[#6B7280] cursor-not-allowed',
 }
 
-function TableGrid({ tables, area, selectedTable, onSelect }) {
+function TableGroup({ title, tables, selectedTableId, onSelect }) {
+    if (tables.length === 0) return null
+
     return (
-        <div className="grid grid-cols-4 gap-2">
-            {tables.map((table) => {
-                const isSelected = selectedTable?.number === table.number && selectedTable?.area === area
-                return (
+        <div>
+            <p className="mb-2 text-xs font-semibold text-[#4B5563]">{title}</p>
+            <div className="grid grid-cols-4 gap-2">
+                {tables.map((table) => (
                     <button
-                        key={table.number}
+                        key={table._id}
                         disabled={table.status !== 'available'}
-                        onClick={() => onSelect({ number: table.number, area, status: table.status })}
+                        onClick={() => onSelect(table)}
                         className={`flex h-9 items-center justify-center rounded-lg text-sm font-semibold ${statusStyles[table.status]} ${
-                            isSelected ? 'ring-2 ring-[#14532D] ring-offset-1' : ''
+                            selectedTableId === table._id ? 'ring-2 ring-[#14532D] ring-offset-1' : ''
                         }`}
                     >
                         {table.number}
                     </button>
-                )
-            })}
+                ))}
+            </div>
         </div>
     )
 }
 
-function CustomerTableGrid({ indoorTables, outdoorTables, selectedTable, onSelect }) {
+function CustomerTableGrid({ tables, areaFilter, selectedTableId, onSelect }) {
+    const sortByNumber = (a, b) => a.number - b.number
+
+    const indoor = tables.filter((t) => t.area === 'Indoor').sort(sortByNumber)
+    const outdoor = tables.filter((t) => t.area === 'Outdoor').sort(sortByNumber)
+
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-4 text-xs text-[#4B5563]">
@@ -38,15 +44,12 @@ function CustomerTableGrid({ indoorTables, outdoorTables, selectedTable, onSelec
                 <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-[#9CA3AF]" /> Maintenance</span>
             </div>
 
-            <div>
-                <p className="mb-2 text-xs font-semibold text-[#4B5563]">Indoor Area</p>
-                <TableGrid tables={indoorTables} area="Indoor" selectedTable={selectedTable} onSelect={onSelect} />
-            </div>
-
-            <div>
-                <p className="mb-2 text-xs font-semibold text-[#4B5563]">Outdoor Area</p>
-                <TableGrid tables={outdoorTables} area="Outdoor" selectedTable={selectedTable} onSelect={onSelect} />
-            </div>
+            {(areaFilter === 'all' || areaFilter === 'Indoor') && (
+                <TableGroup title="Indoor Area" tables={indoor} selectedTableId={selectedTableId} onSelect={onSelect} />
+            )}
+            {(areaFilter === 'all' || areaFilter === 'Outdoor') && (
+                <TableGroup title="Outdoor Area" tables={outdoor} selectedTableId={selectedTableId} onSelect={onSelect} />
+            )}
         </div>
     )
 }
