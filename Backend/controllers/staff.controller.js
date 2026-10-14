@@ -1,69 +1,81 @@
-import Staff from "../models/Staff.js"
-import Restaurant from "../models/Restaurant.js"
-import verifyRestaurantOwnership from "../utils/verifyRestaurantOwnership.js"
+import Staff from '../models/Staff.js'
+import verifyRestaurantOwnership from '../utils/verifyRestaurantOwnership.js'
+
+// Only these fields may be changed through an update
+const editableFields = ['name', 'email', 'phone', 'role', 'status', 'avatarUrl']
 
 export const createStaff = async (req, res, next) => {
-    try{
-        const { restaurantId, name, email, phone, role, avatarUrl} = req.body
+    try {
+        const { restaurantId, name, email, phone, role, avatarUrl } = req.body
+
         await verifyRestaurantOwnership(restaurantId, req.user._id)
+
         const staff = await Staff.create({
             restaurant: restaurantId,
-            name, email, phone, role, avatarUrl
+            name, email, phone, role, avatarUrl,
         })
+
         res.status(201).json({ success: true, data: staff })
     }
-    catch(error){
+    catch (error) {
         next(error)
     }
 }
 
 export const getStaffByRestaurant = async (req, res, next) => {
-    try{
+    try {
         await verifyRestaurantOwnership(req.params.restaurantId, req.user._id)
+
         const staffList = await Staff.find({ restaurant: req.params.restaurantId })
+
         res.status(200).json({ success: true, data: staffList })
     }
-    catch(error){
+    catch (error) {
         next(error)
     }
 }
 
 export const updateStaff = async (req, res, next) => {
-    try{
+    try {
         const staff = await Staff.findById(req.params.id)
-        if(!staff){
-            const error = new Error("Staff member not found")
+        if (!staff) {
+            const error = new Error('Staff member not found')
             error.statusCode = 404
             throw error
         }
+
         await verifyRestaurantOwnership(staff.restaurant, req.user._id)
-        Object.assign(staff, req.body)
+
+        for (const field of editableFields) {
+            if (req.body[field] !== undefined) {
+                staff[field] = req.body[field]
+            }
+        }
         await staff.save()
 
-        res.status(200).json({ success: true, data: staff})
-
+        res.status(200).json({ success: true, data: staff })
     }
-    catch(error){
+    catch (error) {
         next(error)
     }
 }
 
 export const deleteStaff = async (req, res, next) => {
-    try{
+    try {
         const staff = await Staff.findById(req.params.id)
-        if(!staff){
-            const error = new Error("Staff member not found")
+        if (!staff) {
+            const error = new Error('Staff member not found')
             error.statusCode = 404
             throw error
         }
 
         await verifyRestaurantOwnership(staff.restaurant, req.user._id)
+
         await staff.deleteOne()
 
-        res.status(200).json({ success: true, message: "Staff member removed"})
-
+        res.status(200).json({ success: true, message: 'Staff member removed' })
     }
-    catch(error){
+    catch (error) {
         next(error)
     }
 }

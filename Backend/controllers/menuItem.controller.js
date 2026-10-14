@@ -50,7 +50,12 @@ export const updateMenuItem = async (req, res, next) => {
         }
 
         await verifyRestaurantOwnership(menuItem.restaurant, req.user._id)
-        Object.assign(menuItem, req.body)
+        const editableFields = ['category', 'name', 'price', 'description', 'imageUrl', 'available']
+            for (const field of editableFields) {
+                if (req.body[field] !== undefined) {
+                    menuItem[field] = req.body[field]
+                }
+            }
         await menuItem.save()
 
         res.status(200).json({
