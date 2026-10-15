@@ -1,40 +1,40 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose'
 
 const hoursSchema = new mongoose.Schema(
     {
-        day: {type: String, required: true},
-        open: {type:String},
-        close: {type:String},
-        isOpen: {type: Boolean, default: true}
+        day: { type: String, required: true },
+        open: { type: String },
+        close: { type: String },
+        isOpen: { type: Boolean, default: true },
     },
-    {_id: false}
+    { _id: false }
 )
 
 const restaurantSchema = new mongoose.Schema(
     {
-        owner:{
+        owner: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: 'User',
             required: true,
-            unique: true
+            unique: true,
         },
         name: {
             type: String,
-            required: true,
-            trim: true
+            required: [true, 'Restaurant name is required'],
+            trim: true,
         },
         description: {
             type: String,
-            maxLength: 200
+            maxlength: 200,
         },
         cuisineType: {
-            type: String
+            type: String,
         },
         logoUrl: {
-            type: String
+            type: String,
         },
         coverImageUrl: {
-            type: String
+            type: String,
         },
         country: String,
         city: String,
@@ -45,10 +45,19 @@ const restaurantSchema = new mongoose.Schema(
         phone: String,
         email: String,
         website: String,
-        services: [String]
+        services: [String],
+        currency: {
+            type: String,
+            default: 'USD',
+        },
+        timezone: {
+            type: String,
+            default: 'Africa/Kigali',
+        },
     },
     { timestamps: true }
 )
 
-const Restaurant = mongoose.model("Restaurant", restaurantSchema)
+const Restaurant = mongoose.model('Restaurant', restaurantSchema)
+
 export default Restaurant

@@ -1,12 +1,15 @@
 import { Router } from "express"
-import { signUp } from "../controllers/auth.controller.js"
-import { signIn } from "../controllers/auth.controller.js"
-import { signOut } from "../controllers/auth.controller.js"
-import { verifyEmail } from "../controllers/auth.controller.js"
-import { resendVerificationCode } from "../controllers/auth.controller.js"
-import { forgotPassword } from "../controllers/auth.controller.js"
-import { resetPassword } from "../controllers/auth.controller.js"
-
+import authorize from "../middleware/auth.middleware.js"
+import {
+    signUp,
+    signIn,
+    signOut,
+    verifyEmail,
+    resendVerificationCode,
+    forgotPassword,
+    resetPassword,
+    changePassword,
+} from "../controllers/auth.controller.js"
 
 const authRouter = Router()
 
@@ -17,5 +20,6 @@ authRouter.post("/verify-email", verifyEmail)
 authRouter.post("/resend-code", resendVerificationCode)
 authRouter.post("/forgot-password", forgotPassword)
 authRouter.post("/reset-password", resetPassword)
+authRouter.post("/change-password", authorize, changePassword)
 
 export default authRouter

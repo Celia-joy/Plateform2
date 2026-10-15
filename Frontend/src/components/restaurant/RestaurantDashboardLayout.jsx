@@ -3,9 +3,11 @@ import { Bell } from 'lucide-react'
 import RestaurantSidebar from './RestaurantSidebar'
 import { Navigate } from "react-router-dom"
 import { useRestaurant } from "../../context/RestaurantContext"
+import { useAuth } from '../../context/AuthContext'
 
 function RestaurantDashboardLayout({ title, description, children }) {
     const { restaurant, isLoading } = useRestaurant()
+    const { user } = useAuth()
     if(isLoading){
         return (
             <div className="flex min-h-screen items-center justify-center bg-[#FBF3EA]">
@@ -33,9 +35,11 @@ function RestaurantDashboardLayout({ title, description, children }) {
                             <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-[#D9A441]" />
                         </button>
                         <div className="flex items-center gap-2">
-                            <div className="h-9 w-9 rounded-full bg-gray-300" />
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-500">
+                                {user?.fullName?.charAt(0).toUpperCase()}
+                            </div>
                             <div>
-                                <p className="text-sm font-semibold text-[#111827]">UWASE Ariella</p>
+                                <p className="text-sm font-semibold text-[#111827]">{user?.fullName}</p>
                                 <p className="text-xs text-[#4B5563]">Restaurant owner</p>
                             </div>
                         </div>

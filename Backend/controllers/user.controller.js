@@ -31,3 +31,31 @@ export const getUser = async (req, res, next) =>{
         next(error)
     }
 }
+
+export const updateMe = async (req, res, next) => {
+    try {
+        const { fullName } = req.body
+
+        if (!fullName || !fullName.trim()) {
+            const error = new Error('Name is required')
+            error.statusCode = 400
+            throw error
+        }
+
+        req.user.fullName = fullName.trim()
+        await req.user.save()
+
+        res.status(200).json({
+            success: true,
+            data: {
+                _id: req.user._id,
+                fullName: req.user.fullName,
+                email: req.user.email,
+                role: req.user.role,
+            },
+        })
+    }
+    catch (error) {
+        next(error)
+    }
+}

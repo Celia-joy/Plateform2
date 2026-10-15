@@ -114,3 +114,40 @@ export const getMyRestaurant = async (req, res, next) => {
         next(error)
     }
 }
+
+const editableFields = [
+    'name', 'description', 'cuisineType', 'logoUrl', 'coverImageUrl',
+    'country', 'city', 'address', 'zipCode', 'mapLocation',
+    'hours', 'phone', 'email', 'website', 'services',
+    'currency', 'timezone',
+]
+
+export const updateMyRestaurant = async (req, res, next) => {
+    try {
+        const restaurant = await Restaurant.findOne({ owner: req.user._id })
+
+        if (!restaurant) {
+            const error = new Error("You haven't set up a restaurant yet")
+            error.statusCode = 404
+            throw error
+        }
+
+        if (req.body.name !== undefined && !String(req.body.name).trim()) {
+            const error = new Error('Restaurant name cannot be empty')
+            error.statusCode = 400
+            throw error
+        }
+
+        for (const field of editableFields) {
+            if (req.body[field] !== undefined) {
+                restaurant[field] = req.body[field]
+            }
+        }
+        await restaurant.save()
+
+        res.status(200).json({ success: true, data: restaurant })
+    }
+    catch (error) {
+        next(error)
+    }
+}

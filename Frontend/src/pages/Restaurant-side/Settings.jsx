@@ -1,58 +1,127 @@
-// src/pages/Restaurant-side/Settings.jsx
 import { useState } from 'react'
-import { Camera } from 'lucide-react'
 import RestaurantDashboardLayout from '../../components/restaurant/RestaurantDashboardLayout'
 import SettingsNav from '../../components/restaurant/SettingsNav'
+import { useRestaurant } from '../../context/RestaurantContext'
+import { updateMyRestaurant } from '../../services/restaurantService'
+import { cuisineTypes } from '../../constants/cuisineTypes'
 
-const daysDefault = [
-    { day: 'Monday', open: '08:00', close: '22:00', isOpen: true },
-    { day: 'Tuesday', open: '08:00', close: '22:00', isOpen: true },
-    { day: 'Wednesday', open: '08:00', close: '22:00', isOpen: true },
-    { day: 'Thursday', open: '08:00', close: '22:00', isOpen: true },
-    { day: 'Friday', open: '08:00', close: '22:00', isOpen: true },
-    { day: 'Saturday', open: '10:00', close: '02:00', isOpen: true },
-    { day: 'Sunday', open: '10:00', close: '02:00', isOpen: true },
+const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+const currencies = [
+    { value: 'USD', label: 'USD $' },
+    { value: 'RWF', label: 'RWF' },
 ]
 
-function Settings() {
-    const [activeTab, setActiveTab] = useState('general')
-    const [logoPreview, setLogoPreview] = useState(null)
-    const [formData, setFormData] = useState({
-        name: 'Green Leaf Bistro',
-        cuisineType: 'italian',
-        phone: '+250 784 567 896',
-        email: 'hello@greenleafbistro.com',
-        website: 'www.greenleafbistro.com',
-        currency: 'USD',
-        address: '123 Green Street, Downtown, Kigali, NY 10001, Rwanda',
-        hours: daysDefault,
-        timezone: 'UTC-5:00 Eastern Time (US & Canada)',
+const timezones = [
+    { value: 'Africa/Kigali', label: 'Kigali (UTC+2)' },
+    { value: 'Africa/Nairobi', label: 'Nairobi (UTC+3)' },
+    { value: 'Africa/Kampala', label: 'Kampala (UTC+3)' },
+    { value: 'UTC', label: 'UTC' },
+]
+
+const inputClass =
+    'w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[#14532D]'
+
+// Always gives 7 days in order, filling any missing day with sensible defaults
+const buildHours = (saved = []) =>
+    days.map((day) => {
+        const found = saved.find((h) => h.day === day)
+        return found
+            ? { day, open: found.open, close: found.close, isOpen: found.isOpen }
+            : { day, open: '08:00', close: '22:00', isOpen: true }
     })
 
-    const updateData = (fields) => {
-        setFormData((prev) => ({ ...prev, ...fields }))
+function SettingsContent({ restaurant }) {
+    const { setRestaurant } = useRestaurant()
+
+    const [activeTab, setActiveTab] = useState('general')
+    const [isSaving, setIsSaving] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
+
+    // Start the form from the saved restaurant
+    const [form, setForm] = useState({
+        name: restaurant.name || '',
+        cuisineType: restaurant.cuisineType || '',
+        phone: restaurant.phone || '',
+        email: restaurant.email || '',
+        website: restaurant.website || '',
+        currency: restaurant.currency || 'USD',
+        address: restaurant.address || '',
+        city: restaurant.city || '',
+        timezone: restaurant.timezone || 'Africa/Kigali',
+        hours: buildHours(restaurant.hours),
+    })
+
+    const updateForm = (field, value) => {
+        setForm((prev) => ({ ...prev, [field]: value }))
     }
 
     const updateDay = (day, fields) => {
-        const newHours = formData.hours.map((d) => (d.day === day ? { ...d, ...fields } : d))
-        updateData({ hours: newHours })
+        setForm((prev) => ({
+            ...prev,
+            hours: prev.hours.map((h) => (h.day === day ? { ...h, ...fields } : h)),
+        }))
     }
 
-    const handleLogoChange = (e) => {
-        const file = e.target.files[0]
-        if (file) {
-            setLogoPreview(URL.createObjectURL(file))
+    const handleSave = async () => {
+        setErrorMessage('')
+        setSuccessMessage('')
+
+        if (!form.name.trim()) {
+            setErrorMessage('Restaurant name is required')
+            return
+        }
+
+        setIsSaving(true)
+        try {
+            const response = await updateMyRestaurant({
+                name: form.name.trim(),
+                cuisineType: form.cuisineType,
+                phone: form.phone.trim(),
+                email: form.email.trim(),
+                website: form.website.trim(),
+                currency: form.currency,
+                address: form.address.trim(),
+                // Stored lowercase because the restaurant search filters on lowercase city names
+                city: form.city.trim().toLowerCase(),
+                timezone: form.timezone,
+                hours: form.hours,
+            })
+
+            setRestaurant(response.data)
+            setSuccessMessage('Your settings have been saved.')
+        }
+        catch (error) {
+            setErrorMessage(error.message)
+        }
+        finally {
+            setIsSaving(false)
         }
     }
 
+    // If the saved cuisine isn't one of our standard options, still show it
+    const cuisineOptions = cuisineTypes.some((c) => c.value === form.cuisineType) || !form.cuisineType
+        ? cuisineTypes
+        : [...cuisineTypes, { value: form.cuisineType, label: form.cuisineType }]
+
     return (
-        <RestaurantDashboardLayout
-            title="Settings"
-            description="Manage your restaurant settings and preferences"
-        >
-            <div className="mb-4 flex justify-end">
-                <button className="rounded-lg bg-[#14532D] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0F4224]">
-                    Save changes
+        <>
+            <div className="mb-4 flex items-center justify-between">
+                <div className="flex-1">
+                    {errorMessage && (
+                        <div className="max-w-xl rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">{errorMessage}</div>
+                    )}
+                    {successMessage && (
+                        <div className="max-w-xl rounded-lg bg-[#E7F0E3] px-4 py-2.5 text-sm text-[#14532D]">{successMessage}</div>
+                    )}
+                </div>
+                <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="rounded-lg bg-[#14532D] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0F4224] disabled:opacity-60"
+                >
+                    {isSaving ? 'Saving...' : 'Save changes'}
                 </button>
             </div>
 
@@ -65,47 +134,36 @@ function Settings() {
                             <h2 className="text-lg font-bold text-[#111827]">General Information</h2>
                             <p className="text-sm text-[#4B5563]">Update your restaurant's basic information</p>
 
-                            <div className="mt-4 flex items-center gap-4">
-                                <div className="relative h-16 w-16 shrink-0">
-                                    <div className="h-16 w-16 overflow-hidden rounded-full bg-gray-200">
-                                        {logoPreview && <img src={logoPreview} alt="Logo preview" className="h-full w-full object-cover" />}
-                                    </div>
-                                    <label className="absolute -right-1 -bottom-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white">
-                                        <Camera size={12} className="text-[#14532D]" />
-                                        <input type="file" accept="image/*" onChange={handleLogoChange} className="hidden" />
-                                    </label>
-                                </div>
-                            </div>
-
                             <div className="mt-5 grid grid-cols-3 gap-4">
                                 <div>
                                     <label className="mb-1.5 block text-sm font-semibold text-[#111827]">Restaurant Name</label>
                                     <input
                                         type="text"
-                                        value={formData.name}
-                                        onChange={(e) => updateData({ name: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[#14532D]"
+                                        value={form.name}
+                                        onChange={(e) => updateForm('name', e.target.value)}
+                                        className={inputClass}
                                     />
                                 </div>
                                 <div>
                                     <label className="mb-1.5 block text-sm font-semibold text-[#111827]">Cuisine Type</label>
                                     <select
-                                        value={formData.cuisineType}
-                                        onChange={(e) => updateData({ cuisineType: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[#14532D]"
+                                        value={form.cuisineType}
+                                        onChange={(e) => updateForm('cuisineType', e.target.value)}
+                                        className={inputClass}
                                     >
-                                        <option value="italian">Italian</option>
-                                        <option value="rwandan">Rwandan</option>
-                                        <option value="chinese">Chinese</option>
+                                        <option value="">Select cuisine type</option>
+                                        {cuisineOptions.map((cuisine) => (
+                                            <option key={cuisine.value} value={cuisine.value}>{cuisine.label}</option>
+                                        ))}
                                     </select>
                                 </div>
                                 <div>
                                     <label className="mb-1.5 block text-sm font-semibold text-[#111827]">Phone Number</label>
                                     <input
                                         type="tel"
-                                        value={formData.phone}
-                                        onChange={(e) => updateData({ phone: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[#14532D]"
+                                        value={form.phone}
+                                        onChange={(e) => updateForm('phone', e.target.value)}
+                                        className={inputClass}
                                     />
                                 </div>
                             </div>
@@ -115,74 +173,83 @@ function Settings() {
                                     <label className="mb-1.5 block text-sm font-semibold text-[#111827]">Email Address</label>
                                     <input
                                         type="email"
-                                        value={formData.email}
-                                        onChange={(e) => updateData({ email: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[#14532D]"
+                                        value={form.email}
+                                        onChange={(e) => updateForm('email', e.target.value)}
+                                        className={inputClass}
                                     />
                                 </div>
                                 <div>
                                     <label className="mb-1.5 block text-sm font-semibold text-[#111827]">Website</label>
                                     <input
                                         type="text"
-                                        value={formData.website}
-                                        onChange={(e) => updateData({ website: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[#14532D]"
+                                        value={form.website}
+                                        onChange={(e) => updateForm('website', e.target.value)}
+                                        className={inputClass}
                                     />
                                 </div>
                                 <div>
                                     <label className="mb-1.5 block text-sm font-semibold text-[#111827]">Currency</label>
                                     <select
-                                        value={formData.currency}
-                                        onChange={(e) => updateData({ currency: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[#14532D]"
+                                        value={form.currency}
+                                        onChange={(e) => updateForm('currency', e.target.value)}
+                                        className={inputClass}
                                     >
-                                        <option value="USD">USD $</option>
-                                        <option value="RWF">RWF</option>
+                                        {currencies.map((currency) => (
+                                            <option key={currency.value} value={currency.value}>{currency.label}</option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>
 
-                            <div className="mt-4">
-                                <label className="mb-1.5 block text-sm font-semibold text-[#111827]">Restaurant Address</label>
-                                <input
-                                    type="text"
-                                    value={formData.address}
-                                    onChange={(e) => updateData({ address: e.target.value })}
-                                    className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[#14532D]"
-                                />
+                            <div className="mt-4 grid grid-cols-3 gap-4">
+                                <div className="col-span-2">
+                                    <label className="mb-1.5 block text-sm font-semibold text-[#111827]">Restaurant Address</label>
+                                    <input
+                                        type="text"
+                                        value={form.address}
+                                        onChange={(e) => updateForm('address', e.target.value)}
+                                        className={inputClass}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="mb-1.5 block text-sm font-semibold text-[#111827]">City</label>
+                                    <input
+                                        type="text"
+                                        value={form.city}
+                                        onChange={(e) => updateForm('city', e.target.value)}
+                                        className={inputClass}
+                                    />
+                                </div>
                             </div>
                         </div>
 
                         <div className="border-t border-gray-100 pt-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <h2 className="text-lg font-bold text-[#111827]">Business Hours</h2>
-                                    <p className="text-sm text-[#4B5563]">Set your restaurant's operating hours</p>
-                                </div>
-                                <button className="flex items-center gap-1.5 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-[#111827]">
-                                    + Add Special Hours
-                                </button>
-                            </div>
+                            <h2 className="text-lg font-bold text-[#111827]">Business Hours</h2>
+                            <p className="text-sm text-[#4B5563]">Set your restaurant's operating hours</p>
 
                             <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-3">
-                                {formData.hours.map((d) => (
+                                {form.hours.map((d) => (
                                     <div key={d.day} className="flex items-center gap-3">
                                         <span className="w-20 text-sm text-[#374151]">{d.day}</span>
                                         <input
                                             type="time"
                                             value={d.open}
+                                            disabled={!d.isOpen}
                                             onChange={(e) => updateDay(d.day, { open: e.target.value })}
-                                            className="rounded-lg border border-gray-300 px-2 py-1.5 text-xs outline-none"
+                                            className="rounded-lg border border-gray-300 px-2 py-1.5 text-xs outline-none disabled:bg-gray-50 disabled:text-gray-400"
                                         />
                                         <span className="text-gray-400">—</span>
                                         <input
                                             type="time"
                                             value={d.close}
+                                            disabled={!d.isOpen}
                                             onChange={(e) => updateDay(d.day, { close: e.target.value })}
-                                            className="rounded-lg border border-gray-300 px-2 py-1.5 text-xs outline-none"
+                                            className="rounded-lg border border-gray-300 px-2 py-1.5 text-xs outline-none disabled:bg-gray-50 disabled:text-gray-400"
                                         />
                                         <button
+                                            type="button"
                                             onClick={() => updateDay(d.day, { isOpen: !d.isOpen })}
+                                            title={d.isOpen ? 'Open' : 'Closed'}
                                             className={`ml-auto h-5 w-9 rounded-full p-0.5 ${d.isOpen ? 'bg-[#14532D]' : 'bg-gray-300'}`}
                                         >
                                             <div className={`h-4 w-4 rounded-full bg-white transition-transform ${d.isOpen ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -191,22 +258,36 @@ function Settings() {
                                 ))}
                             </div>
 
-                            <div className="mt-5">
+                            <div className="mt-5 max-w-sm">
                                 <label className="mb-1.5 block text-sm font-semibold text-[#111827]">Time zone</label>
-                                <p className="mb-1.5 text-xs text-[#9CA3AF]">Set your restaurant's time zone</p>
                                 <select
-                                    value={formData.timezone}
-                                    onChange={(e) => updateData({ timezone: e.target.value })}
-                                    className="w-full max-w-sm rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[#14532D]"
+                                    value={form.timezone}
+                                    onChange={(e) => updateForm('timezone', e.target.value)}
+                                    className={inputClass}
                                 >
-                                    <option>UTC-5:00 Eastern Time (US &amp; Canada)</option>
-                                    <option>UTC+2:00 Central Africa Time</option>
+                                    {timezones.map((tz) => (
+                                        <option key={tz.value} value={tz.value}>{tz.label}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </>
+    )
+}
+
+function Settings() {
+    const { restaurant } = useRestaurant()
+
+    return (
+        <RestaurantDashboardLayout
+            title="Settings"
+            description="Manage your restaurant settings and preferences"
+        >
+            {/* key makes the form start fresh if a different restaurant ever loads */}
+            {restaurant && <SettingsContent key={restaurant._id} restaurant={restaurant} />}
         </RestaurantDashboardLayout>
     )
 }

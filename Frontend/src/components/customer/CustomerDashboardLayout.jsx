@@ -14,7 +14,7 @@ function CustomerDashboardLayout({ userPhoto, children }) {
                     </button>
                     <div className="flex items-center gap-2">
                         <img src={userPhoto} alt="Rick M." className="h-9 w-9 rounded-full object-cover" />
-                        <span className="text-sm font-semibold text-[#111827]">Rick M.</span>
+                        <span className="text-sm font-semibold text-[#111827]">{user?.fullName}</span>
                     </div>
                 </div>
 
