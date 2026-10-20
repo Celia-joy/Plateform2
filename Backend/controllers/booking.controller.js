@@ -1,10 +1,46 @@
 import Booking from "../models/Booking.js"
 import Table from "../models/Table.js"
+import Restaurant from "../models/Restaurant.js"
 import verifyRestaurantOwnership from "../utils/verifyRestaurantOwnership.js"
 
 export const createBooking = async (req, res, next) => {
     try {
+        if (req.user.role !== "customer") {
+            const error = new Error("Only customer accounts can make bookings")
+            error.statusCode = 403
+            throw error
+        }
+
         const { restaurantId, table, date, time, guests, specialRequests } = req.body
+
+        if (!restaurantId || !date || !time || !guests) {
+            const error = new Error("Restaurant, date, time and number of guests are required")
+            error.statusCode = 400
+            throw error
+        }
+
+        if (!Number.isInteger(guests) || guests < 1 || guests > 50) {
+            const error = new Error("Guests must be a whole number between 1 and 50")
+            error.statusCode = 400
+            throw error
+        }
+
+        const restaurant = await Restaurant.findById(restaurantId)
+        if (!restaurant) {
+            const error = new Error("Restaurant not found")
+            error.statusCode = 404
+            throw error
+        }
+
+        if (table) {
+            const chosenTable = await Table.findById(table)
+            if (!chosenTable || chosenTable.restaurant.toString() !== restaurantId) {
+                const error = new Error("That table does not belong to this restaurant")
+                error.statusCode = 400
+                throw error
+            }
+        }
+
         const booking = await Booking.create({
             restaurant: restaurantId,
             customer: req.user._id,

@@ -15,6 +15,11 @@ export const getUsers = async (req, res, next) => {
 }
 export const getUser = async (req, res, next) =>{
     try{
+        if(req.params.id !== req.user._id.toString()){
+            const error = new Error("You can only view your own profile")
+            error.statusCode = 403
+            throw error
+        }
         const user = await User.findById(req.params.id).select("-password")
         if(!user){
             const error = new Error("User not found");

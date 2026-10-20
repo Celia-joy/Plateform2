@@ -1,5 +1,6 @@
-import { BarChart3, Smartphone, LineChart, Users, Calendar, ArrowRight } from 'lucide-react'
-import {useNavigate} from "react-router-dom"
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { BarChart3, Smartphone, LineChart, Users, Calendar, ArrowRight, ChevronDown } from 'lucide-react'
 import desktopMockup from "../assets/images/desktop-dashboard.png"
 import mobileMockup from "../assets/images/mobile-dashboard.png"
 import ctaPhoto from "../assets/images/waiter-serving-landing-page.jpg"
@@ -21,6 +22,41 @@ const stats = [
     { value: '120+', label: 'Cities Covered' },
     { value: '99.9%', label: 'Uptime and reliability' },
 ]
+
+function RoleMenu({ label, className, restaurantPath, customerPath }) {
+    const [isOpen, setIsOpen] = useState(false)
+
+    return (
+        <div className="relative">
+            <button onClick={() => setIsOpen((open) => !open)} className={className}>
+                {label} <ChevronDown size={14} />
+            </button>
+
+            {isOpen && (
+                <>
+                    {/* An invisible layer behind the menu: clicking anywhere else closes it */}
+                    <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+                    <div className="absolute right-0 z-20 mt-2 w-48 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
+                        <Link
+                            to={restaurantPath}
+                            onClick={() => setIsOpen(false)}
+                            className="block px-4 py-2 text-sm text-[#111827] hover:bg-[#E7F0E3]"
+                        >
+                            As a restaurant
+                        </Link>
+                        <Link
+                            to={customerPath}
+                            onClick={() => setIsOpen(false)}
+                            className="block px-4 py-2 text-sm text-[#111827] hover:bg-[#E7F0E3]"
+                        >
+                            As a customer
+                        </Link>
+                    </div>
+                </>
+            )}
+        </div>
+    )
+}
 
 function Navbar() {
     return (
@@ -45,12 +81,18 @@ function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button className="hidden px-4 py-2 text-sm font-medium text-[#14532D] sm:block">
-                        Log in
-                    </button>
-                    <button className="rounded-lg bg-[#14532D] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0F4224]">
-                        Get Started
-                    </button>
+                    <RoleMenu
+                        label="Log in"
+                        className="hidden items-center gap-1 px-4 py-2 text-sm font-medium text-[#14532D] sm:flex"
+                        restaurantPath="/Restaurant-side/Login"
+                        customerPath="/Customer-side/Login"
+                    />
+                    <RoleMenu
+                        label="Get Started"
+                        className="flex items-center gap-1 rounded-lg bg-[#14532D] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0F4224]"
+                        restaurantPath="/Restaurant-side/Signup"
+                        customerPath="/Customer-side/Signup"
+                    />
                 </div>
             </div>
         </nav>
@@ -58,7 +100,8 @@ function Navbar() {
 }
 
 function Hero() {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
+
     return (
         <section className="mx-auto max-w-[1200px] px-6 py-16 md:py-24">
             <div className="grid items-center gap-12 md:grid-cols-2">
@@ -79,14 +122,16 @@ function Hero() {
                     </p>
 
                     <div className="mt-8 flex flex-wrap gap-4">
-                        <button 
-                        onClick={() => navigate("/Restaurant-side/Signup")}
-                        className="rounded-lg bg-[#14532D] px-6 py-3 text-sm font-semibold text-white hover:bg-[#0F4224]">
+                        <button
+                            onClick={() => navigate("/Restaurant-side/Signup")}
+                            className="rounded-lg bg-[#14532D] px-6 py-3 text-sm font-semibold text-white hover:bg-[#0F4224]"
+                        >
                             Register as restaurant
                         </button>
                         <button
-                        onClick={()=> navigate("/Customer-side/Signup")}
-                        className="rounded-lg border border-[#14532D] px-6 py-3 text-sm font-semibold text-[#14532D] hover:bg-[#E7F0E3]">
+                            onClick={() => navigate("/Customer-side/Signup")}
+                            className="rounded-lg border border-[#14532D] px-6 py-3 text-sm font-semibold text-[#14532D] hover:bg-[#E7F0E3]"
+                        >
                             Register as customer
                         </button>
                     </div>
@@ -145,6 +190,8 @@ function WhyPlateform() {
 }
 
 function CtaBanner() {
+    const navigate = useNavigate()
+
     return (
         <section className="mx-auto max-w-[1200px] px-6 py-8">
             <div className="grid overflow-hidden rounded-3xl md:grid-cols-2">
@@ -162,7 +209,10 @@ function CtaBanner() {
                         Join thousands of restaurant owners who trust Plateform to
                         simplify operations and create amazing experiences.
                     </p>
-                    <button className="mt-6 flex items-center gap-2 rounded-lg bg-[#D9A441] px-6 py-3 text-sm font-semibold text-[#0F3D28] hover:bg-[#C9942E]">
+                    <button
+                        onClick={() => navigate("/Restaurant-side/Signup")}
+                        className="mt-6 flex items-center gap-2 rounded-lg bg-[#D9A441] px-6 py-3 text-sm font-semibold text-[#0F3D28] hover:bg-[#C9942E]"
+                    >
                         Get Started Now <ArrowRight size={16} />
                     </button>
                 </div>
