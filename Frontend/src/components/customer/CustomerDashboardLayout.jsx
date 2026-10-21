@@ -1,7 +1,10 @@
 import { Bell } from 'lucide-react'
 import CustomerSidebar from './CustomerSidebar'
+import { useAuth } from '../../context/AuthContext'
 
 function CustomerDashboardLayout({ userPhoto, children }) {
+    const { user } = useAuth()
+
     return (
         <div className="flex min-h-screen bg-[#FBF3EA]">
             <CustomerSidebar userPhoto={userPhoto} />
@@ -13,7 +16,9 @@ function CustomerDashboardLayout({ userPhoto, children }) {
                         <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-[#D9A441]" />
                     </button>
                     <div className="flex items-center gap-2">
-                        <img src={userPhoto} alt="Rick M." className="h-9 w-9 rounded-full object-cover" />
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-500">
+                            {user?.fullName?.charAt(0).toUpperCase()}
+                        </div>
                         <span className="text-sm font-semibold text-[#111827]">{user?.fullName}</span>
                     </div>
                 </div>
